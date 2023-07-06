@@ -1,0 +1,69 @@
+<div class="row m-0 h-100">
+
+    <div class="col-12 col-lg-8 p-4">
+        <router-outlet (activate)="onOutletActivate($event)"></router-outlet>
+    </div>
+
+    <div class="col background-gray">
+        <div class="row details-sticky pb-2">
+            <div class="col-12">
+                <ng-container *ngIf="modelSelected else noneSelected">
+                    <div class="row justify-content-between pt-2 pb-2 align-items-center background-gray-dark">
+                        <div class="col-auto">
+                            <h5 class="mb-0">
+                                {{modelSelected.name}}
+                            </h5>
+                        </div>
+                        <div class="col-auto">
+                            <button mat-icon-button [matTooltip]="language.instant('APP.COMMONS.TOOLTIP.RENAME')" (click)="onEdit()">
+                                <mat-icon>
+                                    edit
+                                </mat-icon>
+                            </button>
+                            <button mat-icon-button [matTooltip]="language.instant('APP.COMMONS.TOOLTIP.UPDATE')" (click)="onEdit(true)">
+                                <mat-icon>
+                                    update
+                                </mat-icon>
+                            </button>
+                            <button mat-icon-button [matTooltip]="language.instant('APP.COMMONS.TOOLTIP.COPY')" (click)="onCopy()">
+                                <mat-icon>
+                                    content_copy
+                                </mat-icon>
+                            </button>
+                            <button mat-icon-button [matTooltip]="language.instant('APP.COMMONS.TOOLTIP.DELETE')" (click)="onDelete()">
+                                <mat-icon>
+                                    delete
+                                </mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <h5 class="mt-2">
+                        {{'APP.WORD-LIST-COMPONENT.DETAILS' | translate}}
+                    </h5>
+                    <div class="row mt-2 mb-2" *ngFor="let item of itemDetails">
+                        <div class="col-6">
+                            {{item.label | translate}}
+                        </div>
+                        <div *ngIf="!item.button" class="col-6">
+                            {{item.value}}
+                        </div>
+                        <div *ngIf="item.button" class="col-6">
+                            <button mat-raised-button color="accent" (click)="item.action()">
+                                {{item.value | translate}}
+                            </button>
+                        </div>
+                    </div>
+                    
+                </ng-container>
+
+                <ng-template #noneSelected>
+                    <div class="w-100 h-100 d-flex justify-content-center align-items-center">
+                        <h6>{{'APP.WORD-LIST-COMPONENT.NONE-SELECTED' | translate}}</h6>
+                    </div>
+                </ng-template>
+            </div>
+           
+        </div>
+    </div>
+
+</div>

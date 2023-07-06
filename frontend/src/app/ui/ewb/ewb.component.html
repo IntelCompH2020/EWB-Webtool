@@ -1,0 +1,7 @@
+<app-corpus-model (valuesSelected)="registerValues($event)"></app-corpus-model>
+
+<mat-tab-group *ngIf="selectedModel">
+	<mat-tab label="{{ 'APP.EWB-COMPONENT.MODEL-OVERVIEW' | translate }}"><app-model-overview [corpus]="selectedCorpus" [model]="selectedModel"></app-model-overview></mat-tab>
+	<mat-tab label="{{ 'APP.EWB-COMPONENT.SIMILARITIES' | translate }}"><app-similarities [corpus]="selectedCorpus" [model]="selectedModel"></app-similarities></mat-tab>
+	<mat-tab label="{{ 'APP.EWB-COMPONENT.DOCUMENT-SEARCH' | translate }}"><app-document-search-view [corpus]="selectedCorpus" [model]="selectedModel"></app-document-search-view></mat-tab>
+</mat-tab-group>

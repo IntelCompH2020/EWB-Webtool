@@ -1,0 +1,8 @@
+<app-document-search class="search-field" [corpus]="corpus" (selectedDoc)="onSelectedDoc($event)"></app-document-search>
+<div class="row">
+<app-document-view *ngIf="selectedDoc" [selectedDoc]="selectedDoc" class="centered-div col-6"></app-document-view>
+<div class="pie-div">
+	<div *ngIf="chartOptions" [options]="chartOptions" echarts @fadeIn class="col-12">
+</div>
+</div>
+</div>

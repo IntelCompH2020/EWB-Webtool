@@ -1,0 +1,20 @@
+services:
+  services:
+    manageLists:
+      volumeConfiguration:
+        temp_folder: ${DOCKER_WORKSPACE}\wordlist_docker\temp
+    manageCorpus:
+      volumeConfiguration:
+        datasets_folder: ${DOCKER_WORKSPACE}\corpus_docker\datasets
+        temp_folder: ${DOCKER_WORKSPACE}\corpus_docker\temp
+    manageModels:
+      volumeConfiguration:
+        temp_folder: ${DOCKER_WORKSPACE}\models_docker\temp
+    training:
+      volumeConfiguration:
+        tm_models_folder: ${DOCKER_WORKSPACE}\models_docker\TMmodels
+        temp_folder: ${DOCKER_WORKSPACE}\training\temp
+    domainTraining:
+      volumeConfiguration:
+        dc_models_folder: ${DOCKER_WORKSPACE}\models_docker\DCmodels
+        temp_folder: ${DOCKER_WORKSPACE}\training\temp

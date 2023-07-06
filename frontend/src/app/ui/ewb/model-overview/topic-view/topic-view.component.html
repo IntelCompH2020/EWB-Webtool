@@ -1,0 +1,85 @@
+<h4 mat-dialog-title>
+	<mat-toolbar role="toolbar" class="toolbar-style">
+		<span>{{ topicName }}</span>
+	</mat-toolbar>
+</h4>
+<div class="container content-style">
+
+	<div class="row" *ngIf="topicMetadata">
+		<div *ngIf="words.length > 0" class="col align-items-start element-div">
+			<div>Top Words</div>
+			<app-listing class="top-docs" [rows]="words" [columns]="topWordColumns" [count]="words.length" hideFooter></app-listing>
+		</div>
+		<div class="col align-items-end">
+			<div class="row">
+				<div class="col align-items-end element-div">
+					<div class="row statistic-field">
+						Topic Statistics
+					</div>
+					<div class="row">
+						<div class="col-2 statistic-field">
+							ID
+						</div>
+						<div class="col-2 statistic-field">
+							Size
+						</div>
+						<div class="col-2 statistic-field">
+							Nr Active Docs
+						</div>
+						<div class="col-2 statistic-field">
+							Entropy
+						</div>
+						<div class="col-2 statistic-field">
+							Coherence
+						</div>
+						<div class="col-2 statistic-field">
+							Label
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-2 statistic-field">
+							{{ topicMetadata.id }}
+						</div>
+						<div class="col-2 statistic-field">
+							{{ topicMetadata.alphas.toFixed(4) }}
+						</div>
+						<div class="col-2 statistic-field">
+							{{ topicMetadata.ndocs_active }}
+						</div>
+						<div class="col-2 statistic-field">
+							{{ topicMetadata.topic_entropy.toFixed(4) }}
+						</div>
+						<div class="col-2 statistic-field">
+							{{ topicMetadata.topic_coherence.toFixed(4) }}
+						</div>
+						<div class="col-2 statistic-field">
+							{{ topicMetadata.tpc_labels }}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div *ngIf="documents.length > 0" class="col align-items-end element-div">
+					<div>Top Documents</div>
+					<app-listing class="top-docs" [rows]="documents" [columns]="topDocColumns" [count]="documents.length" hideFooter></app-listing>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+</div>
+
+
+
+<ng-template #textWrapTemplate ngx-datatable-cell-template let-row="row" let-value="value" let-column="column">
+	<div class="title-style">{{value}}</div>
+</ng-template>
+
+<ng-template #percentageBar ngx-datatable-cell-template let-row="row" let-value="value" let-column="column">
+	<div class="progress">
+		<div class="progress-bar empty-bar" role="progressbar" [attr.aria-valuenow]="emptyValue(value)" [style]="'width: ' + emptyValue(value) + '%'" aria-valuemin="0" aria-valuemax="100"></div>
+		<div class="progress-bar percent-bar" role="progressbar" [attr.aria-valuenow]="value" [style]="'width: ' + value + '%'" aria-valuemin="0" aria-valuemax="100"><!-- {{(value < 100 && value > 0) ? value : ''}} --></div>
+	</div>
+</ng-template>

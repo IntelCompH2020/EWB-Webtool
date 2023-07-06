@@ -1,0 +1,64 @@
+<div class="options-style">
+	<div>{{ 'APP.EWB-COMPONENT.SIMILARITIES-COMPONENT.OPTION-LABEL' | translate }}</div>
+	<mat-form-field class="selection-style">
+		<mat-select (selectionChange)="onSelectionChange($event)">
+			<mat-option value="1">
+				{{ 'APP.EWB-COMPONENT.SIMILARITIES-COMPONENT.SIMILAR-DOC' | translate }}
+			</mat-option>
+			<mat-option value="2">
+				{{ 'APP.EWB-COMPONENT.SIMILARITIES-COMPONENT.SIMILAR-TEXT' | translate }}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
+</div>
+<div *ngIf="selectedMode">
+	<div [ngSwitch]="selectedMode">
+		<div *ngSwitchCase="1">
+			<div>
+				<app-document-search class="doc-search" [corpus]="corpus" (selectedDoc)="onDocSelected($event)"></app-document-search>
+				<div *ngIf="selectedDoc" class="row">
+					<span class="document-label">Documents related to: </span><a class="interactive" (click)="onActiveRow([selectedDoc])">{{ selectedDoc.title }}</a>
+				</div>
+
+			</div>
+		</div>
+		<div *ngSwitchCase="2">
+			<div class="row textual-style">
+				<div class="col-3 text-search-title">Document Text to search similars to</div>
+				<textarea class="col-5 text-area-style" #simArea></textarea>
+				<button class="col-2 text-search-button" mat-raised-button color="accent" (click)="onTextInputed(simArea.value)">Find Similar Documents</button>
+			</div>
+		</div>
+
+	</div>
+	<div *ngIf="dataFound()" class="row">
+		<app-listing class="col-6" [rows]="relevantDocs" [columns]="columns" [count]="maxValues" selectionType="single" (rowSelected)="onActiveRow($event)" (pageLoad)="onPageLoad($event)"></app-listing>
+		<app-document-view *ngIf="selectedRelativeDoc" [selectedDoc]="selectedRelativeDoc" class="col-6"></app-document-view>
+	</div>
+</div>
+
+<ng-template #textWrapTemplate ngx-datatable-cell-template let-row="row" let-value="value" let-column="column">
+	<div class="title-style">{{value}}</div>
+</ng-template>
+
+<!-- <form [formGroup]="queryForm">
+	<mat-form-field>
+		<mat-label>Low Percent</mat-label>
+		<input matInput formControlName="lowerPercent">
+	</mat-form-field>
+	<mat-form-field>
+		<mat-label>High Percent</mat-label>
+		<input matInput formControlName="higherPercent">
+	</mat-form-field>
+	<mat-form-field>
+		<mat-label>Year</mat-label>
+		<input matInput formControlName="year">
+	</mat-form-field>
+	<mat-form-field>
+		<mat-label>Rows</mat-label>
+		<input matInput formControlName="rows">
+	</mat-form-field>
+
+	<button mat-raised-button color="accent" type="submit" (click)="onSimilarities()">Find Similarities</button>
+
+</form> -->

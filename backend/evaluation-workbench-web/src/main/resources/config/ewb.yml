@@ -1,0 +1,4 @@
+ewb:
+  client:
+    host-url: ${EWB_HOST}
+    max-memory: 524288000
