@@ -14,10 +14,7 @@ import { UiNotificationService } from '@common/modules/notification/ui-notificat
 import { FilterService } from '@common/modules/text-filter/filter-service';
 import { CollectionUtils } from '@common/utilities/collection-utils.service';
 import { TypeUtils } from '@common/utilities/type-utils.service'
-import { TopicModelService } from './http/topic-model.service';
 import { SnackBarCommonNotificationsService } from './ui/snackbar-notifications.service';
-import { RunningTasksQueueService } from './ui/running-tasks-queue.service';
-import { RunningTasksService } from './http/running-tasks.service';
 
 //
 //
@@ -44,7 +41,6 @@ export class CoreAppServiceModule {
 				CollectionUtils,
 				UiNotificationService,
 				ProgressIndicationService,
-				RunningTasksQueueService,
 				HttpErrorHandlingService,
 				TenantService,
 				FilterService,
@@ -53,8 +49,6 @@ export class CoreAppServiceModule {
 				TypeUtils,
 				AppPrincipalService,
 				QueryParamsService,
-				TopicModelService,
-				RunningTasksService,
 				SnackBarCommonNotificationsService
 			],
 		};

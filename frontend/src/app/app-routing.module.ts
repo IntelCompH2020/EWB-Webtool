@@ -22,21 +22,6 @@ const appRoutes: Routes = [
 		loadChildren: () => import('@app/ui/classification/classification.module').then(m => m.ClassificationModule)
 	},
 	{
-		path: 'corpus',
-		canLoad: [AuthGuard],
-		loadChildren: () => import('@app/ui/corpus/corpus.module').then(m => m.CorpusModule)
-	},
-	{
-		path: 'models',
-		canLoad: [AuthGuard],
-		loadChildren: () => import('@app/ui/models/models.module').then(m => m.ModelsModule)
-	},
-	{
-		path: 'wordlists',
-		canLoad: [AuthGuard],
-		loadChildren: () => import('@app/ui/wordlists/wordlists.module').then(m => m.WordListsModule)
-	},
-	{
 		path: 'login',
 		loadChildren: () => import('@idp-service/ui/login/login.module').then(m => m.LoginModule)
 	},

@@ -6,10 +6,6 @@ import gr.cite.intelcomp.evaluationworkbench.common.scope.fake.FakeRequestScope;
 import gr.cite.intelcomp.evaluationworkbench.data.ScheduledEventEntity;
 import gr.cite.intelcomp.evaluationworkbench.eventscheduler.EventSchedulerProperties;
 import gr.cite.intelcomp.evaluationworkbench.eventscheduler.processing.EventProcessingStatus;
-import gr.cite.intelcomp.evaluationworkbench.eventscheduler.processing.ScheduledEventHandler;
-import gr.cite.intelcomp.evaluationworkbench.eventscheduler.processing.checktasks.CheckTasksScheduledEventHandler;
-import gr.cite.intelcomp.evaluationworkbench.eventscheduler.processing.rundomaintraining.RunDomainTrainingScheduledEventHandler;
-import gr.cite.intelcomp.evaluationworkbench.eventscheduler.processing.runtraining.RunTrainingScheduledEventHandler;
 import gr.cite.intelcomp.evaluationworkbench.query.ScheduledEventQuery;
 import gr.cite.tools.data.query.Ordering;
 import gr.cite.tools.logging.LoggerService;
@@ -205,29 +201,6 @@ public class EventSchedulerTask {
     }
 
     protected EventProcessingStatus process(ScheduledEventEntity scheduledEventMessage, EntityManager entityManager) {
-        try {
-            ScheduledEventHandler handler;
-            switch (scheduledEventMessage.getEventType()) {
-                case RUN_ROOT_TRAINING:
-                case PREPARE_HIERARCHICAL_TRAINING:
-                case RUN_HIERARCHICAL_TRAINING:
-                case RESET_MODEL:
-                    handler = applicationContext.getBean(RunTrainingScheduledEventHandler.class);
-                    break;
-                case RUN_ROOT_DOMAIN_TRAINING:
-                    handler = applicationContext.getBean(RunDomainTrainingScheduledEventHandler.class);
-                    break;
-                case CHECK_RUNNING_TRAINING_TASKS:
-                    handler = applicationContext.getBean(CheckTasksScheduledEventHandler.class);
-                    break;
-                default:
-                    return EventProcessingStatus.Discard;
-            }
-
-            return handler.handle(scheduledEventMessage, entityManager);
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-            return EventProcessingStatus.Error;
-        }
+        return EventProcessingStatus.Discard;
     }
 }

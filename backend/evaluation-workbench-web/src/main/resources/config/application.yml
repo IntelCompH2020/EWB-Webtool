@@ -13,9 +13,5 @@ spring:
       optional:classpath:config/cache.yml[.yml], optional:classpath:config/cache-${spring.profiles.active}.yml[.yml], optional:file:../config/cache-${spring.profiles.active}.yml[.yml],
       optional:classpath:config/locale.yml[.yml], optional:classpath:config/locale-${spring.profiles.active}.yml[.yml], optional:file:../config/locale-${spring.profiles.active}.yml[.yml],
       optional:classpath:config/cors.yml[.yml], optional:classpath:config/cors-${spring.profiles.active}.yml[.yml], optional:file:../config/cors-${spring.profiles.active}.yml[.yml],
-      optional:classpath:config/kubernetes.yml[.yml], optional:classpath:config/kubernetes-${spring.profiles.active}.yml[.yml], optional:file:../config/kubernetes-${spring.profiles.active}.yml[.yml],
-      optional:classpath:config/services.yml[.yml], optional:classpath:config/services-${spring.profiles.active}.yml[.yml], optional:file:../config/services-${spring.profiles.active}.yml[.yml],
-      optional:classpath:config/docker.yml[.yml], optional:classpath:config/docker-${spring.profiles.active}.yml[.yml], optional:file:../config/docker-${spring.profiles.active}.yml[.yml],
       optional:classpath:config/event-scheduler.yml[.yml], optional:classpath:config/event-scheduler-${spring.profiles.active}.yml[.yml], optional:file:../config/event-scheduler-${spring.profiles.active}.yml[.yml],
-      optional:classpath:config/validation.yml[.yml], optional:classpath:config/validation-${spring.profiles.active}.yml[.yml], optional:file:../config/validation-${spring.profiles.active}.yml[.yml],
       optional:classpath:config/ewb.yml[.yml], optional:classpath:config/ewb-${spring.profiles.active}.yml[.yml], optional:file:../config/ewb-${spring.profiles.active}.yml[.yml]

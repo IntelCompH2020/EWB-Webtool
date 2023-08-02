@@ -26,7 +26,6 @@ import { OAuthModule, OAuthStorage } from 'angular-oauth2-oidc';
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { TenantChooseDialogModule } from './ui/tenant/choose-dialog/tenant-choose-dialog.module';
 import { FooterComponent } from './ui/footer/footer.component';
-import { TrainingProgressModelDialogModule } from '@common/modules/training-model-progress/training-model-dialog.module';
 import { InterceptorType } from '@common/http/interceptors/interceptor-type';
 import { BaseHttpParams } from '@common/http/base-http-params';
 import { AuthService } from './core/services/ui/auth.service';
@@ -83,7 +82,6 @@ export function InstallationConfigurationFactory(appConfig: InstallationConfigur
 
 		AppRoutingModule,
 		CommonUiModule,
-		TrainingProgressModelDialogModule,
 		TranslateModule.forRoot({
 			loader: {
 				provide: TranslateLoader,
