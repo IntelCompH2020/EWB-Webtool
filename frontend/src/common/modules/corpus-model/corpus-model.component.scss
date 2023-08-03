@@ -1,11 +1,13 @@
-.centered-div {
-    padding-left: 25%;
-}
-
 .title-span {
+    display: block;
     background-color: #38260edc;
     color: white;
-	display: block;
 	text-align: center;
-	border-radius: 5px;
+	border-radius: .5rem;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+}
+
+.model-selection-row {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }

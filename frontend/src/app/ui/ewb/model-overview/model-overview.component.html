@@ -1,5 +1,5 @@
 <div *ngIf="topics.length > 0" class="wrapper">
-	<mat-radio-group class="radio-style" (change)="onRadioChange($event)" [value]="selectedView">
+	<mat-radio-group class="radio-style view-selection-row" (change)="onRadioChange($event)" [value]="selectedView">
 		<mat-radio-button class="radio-style" value="1">{{ 'APP.EWB-COMPONENT.MODEL-OVERVIEW-COMPONENT.DEFAULT' | translate }}</mat-radio-button>
 		<mat-radio-button class="radio-style" value="3">{{ 'APP.EWB-COMPONENT.MODEL-OVERVIEW-COMPONENT.HIERARCHICAL' | translate }}</mat-radio-button>
 		<mat-radio-button class="radio-style" value="2">{{ 'APP.EWB-COMPONENT.MODEL-OVERVIEW-COMPONENT.TEMPORAL' | translate }}</mat-radio-button>

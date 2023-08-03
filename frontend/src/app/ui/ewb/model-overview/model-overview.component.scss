@@ -16,24 +16,24 @@
 }
 
 .radio-style {
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
-	border-bottom-color: #cfcfb5;
 	background: aliceblue;
-	padding-left: 5px;
-	padding-bottom: 5px;
+	padding: .3rem;
 }
 
-.chart{
-    height: 450px !important;
+.chart {
+	min-height: 60vh !important;
 	overflow: visible;
+	margin: .5rem;
 }
 
-.radio-style {
-	margin-left: 5px;
-	margin-right: 5px;
-}
-
-.topic-style .mat-dialog-container .mat-dialog-content{
+.topic-style .mat-dialog-container .mat-dialog-content {
 	overflow-x: hidden;
+}
+
+.view-selection-row {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+mat-button-toggle-group {
+	border-top: 0 !important;
 }
