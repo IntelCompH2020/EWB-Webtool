@@ -395,7 +395,8 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
   openDialog(event: any) {
 	if (this.selectedView === '1') {
 		this.dialog.open(TopicViewComponent, {
-			maxHeight: '600px',
+			width: '85vw',
+			height: '80vh',
 			panelClass: 'topic-style',
 			data: {
 				corpus: this.corpus,

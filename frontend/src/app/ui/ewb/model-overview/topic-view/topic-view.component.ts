@@ -89,7 +89,6 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 			resizeable: false,
 			alwaysShown: true,
 			canAutoResize: true,
-			minWidth: 250,
 			languageName: 'Title',
 			cellTemplate: this.textWrapTemplate,
 			headerClass: 'pretty-header'
@@ -102,7 +101,8 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 			alwaysShown: true,
 			isTreeColumn: false,
 			canAutoResize: true,
-			minWidth: 125,
+			maxWidth: 250,
+			minWidth: 200,
 			languageName: '%',
 			headerClass: 'pretty-header',
 			cellTemplate: this.percentageBar,
@@ -116,7 +116,8 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 			alwaysShown: true,
 			isTreeColumn: false,
 			canAutoResize: true,
-			minWidth: 50,
+			maxWidth: 150,
+			minWidth: 100,
 			languageName: 'Tokens',
 			headerClass: 'pretty-header'
 		}
