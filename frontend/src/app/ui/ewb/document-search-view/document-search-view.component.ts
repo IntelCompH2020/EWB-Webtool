@@ -1,6 +1,5 @@
 import { CdkScrollable, ScrollDispatcher } from '@angular/cdk/scrolling';
-import { AfterViewInit, Component, ElementRef, Input, NgZone, OnInit, SecurityContext, ViewChild } from '@angular/core';
-import { MatAutocompleteActivatedEvent, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { GENERAL_ANIMATIONS } from '@app/animations';
 import { Theta } from '@app/core/model/ewb/theta.model';
@@ -12,10 +11,10 @@ import { EChartsOption } from 'echarts';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-document-search-view',
-  templateUrl: './document-search-view.component.html',
-  styleUrls: ['./document-search-view.component.scss'],
-  animations: GENERAL_ANIMATIONS
+	selector: 'app-document-search-view',
+	templateUrl: './document-search-view.component.html',
+	styleUrls: ['./document-search-view.component.scss'],
+	animations: GENERAL_ANIMATIONS
 })
 export class DocumentSearchViewComponent extends BaseComponent implements OnInit, AfterViewInit {
 	docs: any[] = [];
@@ -31,65 +30,65 @@ export class DocumentSearchViewComponent extends BaseComponent implements OnInit
 	chartOptions: EChartsOption = null;
 	private topics: Topic[] = [];
 
-  constructor(
-	private ewbService: EwbService,
-	private scrollDispatch: ScrollDispatcher,
-	private sanitizer: DomSanitizer
-  ) {
-	super();
-   }
+	constructor(
+		private ewbService: EwbService,
+		private scrollDispatch: ScrollDispatcher,
+		private sanitizer: DomSanitizer
+	) {
+		super();
+	}
 	ngAfterViewInit(): void {
 		this.scrollDispatch.scrolled().subscribe((data: CdkScrollable) => {
 			console.log(JSON.stringify(data));
 		});
 	}
 
-  ngOnInit(): void {
-  }
+	ngOnInit(): void {
+	}
 
-  onSelectedDoc(ev: any) {
-	this.selectedDoc = ev;
-	this.setupChartOptions();
-  }
+	onSelectedDoc(ev: any) {
+		this.selectedDoc = ev;
+		this.setupChartOptions();
+	}
 
-  private setupChartOptions() {
-	let thetas: Theta[] = [];
+	private setupChartOptions() {
+		let thetas: Theta[] = [];
 
-	this.ewbService.queryThetas({corpusCollection: this.corpus, docId: this.selectedDoc.id, modelName: this.model})
-	.pipe(takeUntil(this._destroyed))
-	.subscribe((result: QueryResult<Theta>) => {
-		thetas = result.items;
-		this.chartOptions = {
-			tooltip: {
-				trigger: 'item'
-			},
-			series: {
-				type: 'pie',
-				radius: ['40%', '70%'],
-				select: {
-					disabled: true
-				},
-				data: thetas.map((theta: Theta) => {
-					const data = {
-						id: theta.id,
-						name: theta.name,
-						value: theta.theta
+		this.ewbService.queryThetas({ corpusCollection: this.corpus, docId: this.selectedDoc.id, modelName: this.model })
+			.pipe(takeUntil(this._destroyed))
+			.subscribe((result: QueryResult<Theta>) => {
+				thetas = result.items;
+				this.chartOptions = {
+					tooltip: {
+						trigger: 'item'
+					},
+					series: {
+						type: 'pie',
+						radius: ['40%', '70%'],
+						select: {
+							disabled: true
+						},
+						data: thetas.map((theta: Theta) => {
+							const data = {
+								id: theta.id,
+								name: theta.name,
+								value: theta.theta
+							}
+							return data;
+						}),
+						emphasis: {
+							itemStyle: {
+								shadowBlur: 10,
+								shadowOffsetX: 0,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
 						}
-						return data;
-				}),
-				emphasis: {
-					itemStyle: {
-					  shadowBlur: 10,
-					  shadowOffsetX: 0,
-					  shadowColor: 'rgba(0, 0, 0, 0.5)'
 					}
-				  }
-			}
-		};
-	});
-  }
-  typeof(obj: any): string {
-	return typeof(obj);
-  }
+				};
+			});
+	}
+	typeof(obj: any): string {
+		return typeof (obj);
+	}
 
 }

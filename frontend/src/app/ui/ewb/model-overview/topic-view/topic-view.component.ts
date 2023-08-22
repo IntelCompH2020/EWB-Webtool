@@ -1,4 +1,3 @@
-import { ViewEncapsulation } from '@angular/compiler';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PercentValuePipe } from '@app/core/formatting/pipes/percentage.pipe';

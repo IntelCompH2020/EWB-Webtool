@@ -1,8 +1,6 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Classification } from '@app/core/model/ewb/classification.model';
-import { TopDoc } from '@app/core/model/ewb/top-doc.model';
 import { ColumnDefinition } from '@common/modules/listing/listing.component';
-import { pipe } from 'rxjs';
 import { nameof } from 'ts-simple-nameof';
 
 @Component({

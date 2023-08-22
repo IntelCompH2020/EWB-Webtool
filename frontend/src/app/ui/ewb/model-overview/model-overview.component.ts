@@ -7,7 +7,7 @@ import { QueryResult } from '@common/model/query-result';
 import { takeUntil } from 'rxjs/operators';
 import { TopicViewComponent } from './topic-view/topic-view.component';
 import { MatRadioChange } from '@angular/material/radio';
-import { CustomSeriesOption, CustomSeriesRenderItem, CustomSeriesRenderItemReturn, EChartsOption, GraphSeriesOption } from 'echarts';
+import { CustomSeriesRenderItemReturn, EChartsOption } from 'echarts';
 import { GENERAL_ANIMATIONS } from '@app/animations';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import * as d3 from 'd3';
