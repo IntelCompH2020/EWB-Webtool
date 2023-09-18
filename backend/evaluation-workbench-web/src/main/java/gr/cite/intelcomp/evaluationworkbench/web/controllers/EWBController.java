@@ -138,5 +138,11 @@ public class EWBController {
         return new QueryResult<>(collections, collections.size());
     }
 
+    @PostMapping("getPairsOfDocsWithHighSim")
+    public QueryResult<EWBSimilarityScore> getPairsOfDocsWithHighSim(@RequestBody EWBSimilarityScoreQuery query) {
+        List<EWBSimilarityScore> similarityScores = service.getPairsOfDocsWithHighSim(query);
+        return new QueryResult<>(similarityScores, similarityScores.size());
+    }
+
 
 }

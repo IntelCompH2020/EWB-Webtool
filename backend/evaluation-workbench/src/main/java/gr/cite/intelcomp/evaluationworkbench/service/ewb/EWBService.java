@@ -480,7 +480,7 @@ public class EWBService {
     }
 
     public List<PrettySemanticsModel> listSimilarDocsByText(EWBSimilarTextQuery query) {
-        List<PrettySemanticsModel> result = new ArrayList<>();
+        List<PrettySemanticsModel> result;
         List<SemanticsModel> semanticsModels = this.ewbTMClient.get().uri("/queries/getDocsSimilarToFreeText/", builder -> WebClientUtils.buildParameters(builder, query))
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<SemanticsModel>>() {}))
                 .block();
@@ -505,5 +505,11 @@ public class EWBService {
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
         return result;
+    }
+
+    public List<EWBSimilarityScore> getPairsOfDocsWithHighSim(EWBSimilarityScoreQuery query) {
+        return this.ewbTMClient.get().uri("/queries/getPairsOfDocsWithHighSim/", builder -> WebClientUtils.buildParameters(builder, query))
+                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBSimilarityScore>>() {}))
+                .block();
     }
 }
