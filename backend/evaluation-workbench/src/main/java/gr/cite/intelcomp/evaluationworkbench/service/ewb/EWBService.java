@@ -61,7 +61,7 @@ public class EWBService {
     }
 
     public List<PrettySemanticsModel> querySemanticsRelationships(SemanticsQuery query) {
-        List<PrettySemanticsModel> result = new ArrayList<>();
+        List<PrettySemanticsModel> result;
         List<SemanticsModel> semanticsModels = this.querySemanticsRelationshipsInternal(query);
         CollectionQuery collectionQuery = new CollectionQuery();
         collectionQuery.setCollection(query.getCorpusCollection());
@@ -91,7 +91,8 @@ public class EWBService {
                     if (mono.statusCode() != HttpStatus.OK) {
                         return Mono.empty();
                     }
-                    return mono.bodyToMono(new ParameterizedTypeReference<List<SemanticsModel>>() {});
+                    return mono.bodyToMono(new ParameterizedTypeReference<List<SemanticsModel>>() {
+                    });
                 }).block();
     }
 
@@ -117,8 +118,8 @@ public class EWBService {
         thetas.forEach(s -> {
             String[] values = s.split("\\|");
             if (values.length == 2) {
-                String name = topicLabels.stream().filter(ewbTopicModel -> ewbTopicModel.getId().equals(values[0])).findFirst().get().getTpcLabels();
-                thetaList.add(new EWBPrettyTheta(values[0], name, Double.parseDouble(values[1])));
+                Optional<EWBTopicModel> model = topicLabels.stream().filter(ewbTopicModel -> ewbTopicModel.getId().equals(values[0])).findFirst();
+                model.ifPresent(ewbTopicModel -> thetaList.add(new EWBPrettyTheta(values[0], ewbTopicModel.getTpcLabels(), Double.parseDouble(values[1]))));
             }
         });
         return thetaList;
@@ -163,10 +164,10 @@ public class EWBService {
                         builder.queryParam("corpus_collection", corpus).queryParam("doc_id", docId).build())
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
                 })).block()).stream().peek(doc -> {
-                    String simKey = doc.keySet().stream().filter(key -> key.startsWith("sim_")).findFirst().orElse("");
-                    doc.remove(simKey);
-                    String ndocsKey = doc.keySet().stream().filter(key -> key.equals("nwords_per_doc")).findFirst().orElse("");
-                    doc.remove(ndocsKey);
+            String simKey = doc.keySet().stream().filter(key -> key.startsWith("sim_")).findFirst().orElse("");
+            doc.remove(simKey);
+            String ndocsKey = doc.keySet().stream().filter(key -> key.equals("nwords_per_doc")).findFirst().orElse("");
+            doc.remove(ndocsKey);
         }).findFirst().orElse(null);
     }
 
@@ -176,14 +177,16 @@ public class EWBService {
                 })).block();
     }
 
-    /**Due to the size of the data, keep it static to 10 rows per requests*/
+    /**
+     * Due to the size of the data, keep it static to 10 rows per requests
+     */
     private static final Integer THETA_MAX_ROWS = 100;
 
     public Map<String, Map<String, Double>> getThetaRelations(LargeThetasQuery largeThetasQuery) {
         Map<String, Map<String, Double>> relationThetas = new HashMap<>();
         int maxTopics = this.queryNrDocsColl(largeThetasQuery.getModelName());
         largeThetasQuery.setRows(THETA_MAX_ROWS);
-        int index = 0;
+        int index;
         List<String> blackListedIds = new ArrayList<>();
         for (int i = 0; i < maxTopics; i++) {
             index = 0;
@@ -217,21 +220,20 @@ public class EWBService {
     }
 
     private static final Integer MAX_TEMPORAL_STEP = 1000;
+
     public Map<String, Map<Integer, Double>> getTemporalTopics(String corpus, String model) {
         Map<String, Map<Integer, Double>> result = new TreeMap<>();
         List<Map<String, Object>> docs = new ArrayList<>();
         int index = 0;
         int minYear = 10000;
         int maxYear = 0;
-        Integer count = this.queryNrDocsColl(model);
         EWBThetaAndDateQuery query = new EWBThetaAndDateQuery();
         query.setCorpusCollection(corpus);
         query.setModelName(model);
         query.setStart(index);
         query.setRows(MAX_TEMPORAL_STEP);
-        List<String> blacklistDocIds = new ArrayList<>();
         String topicField = "doctpc_" + model;
-        while(true) {
+        while (true) {
             query.setStart(index);
             List<Map<String, String>> tdocs = this.getThetasAndDates(query);
             if (tdocs.isEmpty()) {
@@ -239,16 +241,15 @@ public class EWBService {
             }
             List<Map<String, Object>> parsedDocs = tdocs.stream().map(doc -> {
                 String doctpcKey = doc.keySet().stream().filter(key -> key.startsWith("doctpc")).findFirst().orElse("");
-                String doctpcValue  = doc.remove(doctpcKey);
-                Map<String, Object> newDoc = new HashMap<>();
-                newDoc.putAll(doc);
+                String doctpcValue = doc.remove(doctpcKey);
+                Map<String, Object> newDoc = new HashMap<>(doc);
                 newDoc.put(doctpcKey, EWBTheta.mapToPojo(doctpcValue));
                 return newDoc;
-            }).collect(Collectors.toList());
+            }).toList();
             docs.addAll(parsedDocs);
             index += MAX_TEMPORAL_STEP;
         }
-        for (Map<String, Object> doc: docs){
+        for (Map<String, Object> doc : docs) {
             if (doc.containsKey(topicField)) {
                 List<EWBTheta> topics = (List<EWBTheta>) doc.get(topicField);
                 if (topics != null) {
@@ -321,14 +322,17 @@ public class EWBService {
             List<Map<String, Object>> docs = this.queryLargeThetas(largeThetasQuery);
             final String topicId = "t" + i;
             result.put(topicId, docs.stream().map(doc -> {
-               EWBTheta tres = EWBTheta.mapToPojo(doc.get("doctpc_" + model).toString()).stream()
-                    .filter(theta -> theta.getId().equals(topicId))
-                    .peek(theta -> theta.setId(doc.get("id").toString())).findFirst().orElse(null);
-               tres.setTheta(tres.getTheta() * Integer.parseInt(doc.get("nwords_per_doc").toString()));
-               return tres;
-            })
-                            .limit(10)
-                    .collect(Collectors.toList()));
+                List<EWBTheta> thetas = EWBTheta.mapToPojo(doc.get("doctpc_" + model).toString());
+                EWBTheta tres = null;
+                if (thetas != null) {
+                    tres = thetas.stream()
+                            .filter(theta -> theta.getId().equals(topicId))
+                            .peek(theta -> theta.setId(doc.get("id").toString())).findFirst().orElse(null);
+                    if (tres != null)
+                        tres.setTheta(tres.getTheta() * Integer.parseInt(doc.get("nwords_per_doc").toString()));
+                }
+                return tres;
+            }).limit(10).collect(Collectors.toList()));
         }
         return result;
     }
@@ -356,7 +360,7 @@ public class EWBService {
         EWBTopicModelInfoQuery query = new EWBTopicModelInfoQuery();
         query.setModelName(model);
         query.setRows(maxRows);
-        while(index < count) {
+        while (index < count) {
             query.setStart(index);
             result.putAll(this.getTopicMetadataInternal(query).stream().map(topicMetadata -> Map.entry(topicMetadata.getId(), topicMetadata.getVocab().stream().map(EWBTopicBeta::getId).collect(Collectors.toList()))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
             index += maxRows;
@@ -365,16 +369,13 @@ public class EWBService {
     }
 
     public List<EWBTopicBeta> getTopicsTopWords(String model, String topicId) {
-        List<EWBTopicBeta> result = new ArrayList<>();
-        Integer count = this.queryNrDocsColl(model);
         int index = 0;
         final int maxRows = 100;
         EWBTopicModelInfoQuery query = new EWBTopicModelInfoQuery();
         query.setModelName(model);
         query.setRows(maxRows);
         query.setStart(index);
-        result.addAll(this.getTopicMetadataInternal(query).stream().filter(topicMetadata -> topicMetadata.getId().equals(topicId)).map(EWBTopicMetadata::getVocab).flatMap(Collection::stream).sorted(Comparator.comparingInt(EWBTopicBeta::getBeta).reversed()).collect(Collectors.toList()));
-        return result;
+        return this.getTopicMetadataInternal(query).stream().filter(topicMetadata -> topicMetadata.getId().equals(topicId)).map(EWBTopicMetadata::getVocab).flatMap(Collection::stream).sorted(Comparator.comparingInt(EWBTopicBeta::getBeta).reversed()).collect(Collectors.toList());
     }
 
     public Map<String, Double> getSimilarityPairs(SemanticsPairQuery semanticsPairQuery) {
@@ -383,7 +384,7 @@ public class EWBService {
         LargeThetasQuery ltquery = new LargeThetasQuery();
         ltquery.setCorpusCollection(semanticsPairQuery.getCorpus());
         ltquery.setModelName(semanticsPairQuery.getModel());
-        ltquery.setThreshold(Integer.valueOf(0));
+        ltquery.setThreshold(0);
         for (int i = 0; i < count; i++) {
             ltquery.setTopicId(String.valueOf(i));
             List<Map<String, Object>> docs = this.queryLargeThetas(ltquery);
@@ -475,15 +476,19 @@ public class EWBService {
 
     private List<EWBScore> getCorrelatedTopicsInternal(EWBCorrelatedTopicsQuery query) {
         return this.ewbTMClient.get().uri("/queries/getMostCorrelatedTopics/", builder -> WebClientUtils.buildParameters(builder, query))
-                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBScore>>() {}))
+                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBScore>>() {
+                }))
                 .block();
     }
 
     public List<PrettySemanticsModel> listSimilarDocsByText(EWBSimilarTextQuery query) {
         List<PrettySemanticsModel> result;
         List<SemanticsModel> semanticsModels = this.ewbTMClient.get().uri("/queries/getDocsSimilarToFreeText/", builder -> WebClientUtils.buildParameters(builder, query))
-                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<SemanticsModel>>() {}))
+                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<SemanticsModel>>() {
+                }))
                 .block();
+        if (semanticsModels == null)
+            return null;
 
         CollectionQuery collectionQuery = new CollectionQuery();
         collectionQuery.setCollection(query.getCorpus());
@@ -509,7 +514,8 @@ public class EWBService {
 
     public List<EWBSimilarityScore> getPairsOfDocsWithHighSim(EWBSimilarityScoreQuery query) {
         return this.ewbTMClient.get().uri("/queries/getPairsOfDocsWithHighSim/", builder -> WebClientUtils.buildParameters(builder, query))
-                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBSimilarityScore>>() {}))
+                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBSimilarityScore>>() {
+                }))
                 .block();
     }
 }
