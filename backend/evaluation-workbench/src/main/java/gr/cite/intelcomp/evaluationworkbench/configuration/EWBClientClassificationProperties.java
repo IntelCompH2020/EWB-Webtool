@@ -1,15 +1,16 @@
 package gr.cite.intelcomp.evaluationworkbench.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
-@ConfigurationProperties(prefix = "ewb.client")
-public class EWBClientProperties {
+@ConfigurationProperties(prefix = "ewb.client.classification")
+public class EWBClientClassificationProperties {
+
     private final String hostUrl;
     private final Integer maxMemory;
 
     @ConstructorBinding
-    public EWBClientProperties(String hostUrl, Integer maxMemory) {
+    public EWBClientClassificationProperties(String hostUrl, Integer maxMemory) {
         this.hostUrl = hostUrl;
         this.maxMemory = maxMemory;
     }
@@ -21,4 +22,5 @@ public class EWBClientProperties {
     public Integer getMaxMemory() {
         return maxMemory;
     }
+
 }

@@ -10,25 +10,42 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
-@EnableConfigurationProperties(EWBClientProperties.class)
+@EnableConfigurationProperties({EWBClientTMProperties.class, EWBClientClassificationProperties.class})
 public class EWBClientConfiguration {
 
-    private final EWBClientProperties properties;
+    private final EWBClientTMProperties tmProperties;
 
-    public EWBClientConfiguration(EWBClientProperties properties) {
-        this.properties = properties;
+    private final EWBClientClassificationProperties classificationProperties;
+
+    public EWBClientConfiguration(EWBClientTMProperties tmProperties, EWBClientClassificationProperties classificationProperties) {
+        this.tmProperties = tmProperties;
+        this.classificationProperties = classificationProperties;
     }
 
     @Bean
-    @Qualifier("ewbClient")
-    public WebClient ewbClient() {
+    @Qualifier("ewbTMClient")
+    public WebClient ewbTMClient() {
         ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(
                 clientCodecConfigurer ->
-                        clientCodecConfigurer.defaultCodecs().maxInMemorySize(properties.getMaxMemory())
+                        clientCodecConfigurer.defaultCodecs().maxInMemorySize(tmProperties.getMaxMemory())
         ).build();
-        return WebClient.builder().baseUrl(properties.getHostUrl())
+        return WebClient.builder().baseUrl(tmProperties.getHostUrl())
                 .exchangeStrategies(strategies)
                 .clientConnector(new ReactorClientHttpConnector(HttpClient.create().followRedirect(true)))
                 .build();
     }
+
+    @Bean
+    @Qualifier("ewbClassificationClient")
+    public WebClient ewbClassificationClient() {
+        ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(
+                clientCodecConfigurer ->
+                        clientCodecConfigurer.defaultCodecs().maxInMemorySize(classificationProperties.getMaxMemory())
+        ).build();
+        return WebClient.builder().baseUrl(classificationProperties.getHostUrl())
+                .exchangeStrategies(strategies)
+                .clientConnector(new ReactorClientHttpConnector(HttpClient.create().followRedirect(true)))
+                .build();
+    }
+
 }

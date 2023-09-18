@@ -20,39 +20,42 @@ import java.util.stream.Collectors;
 @Component
 public class EWBService {
 
-    private final WebClient ewbClient;
+    private final WebClient ewbTMClient;
+
+    private final WebClient ewbClassificationClient;
 
     @Autowired
-    public EWBService(@Qualifier("ewbClient") WebClient ewbClient) {
-        this.ewbClient = ewbClient;
+    public EWBService(@Qualifier("ewbTMClient") WebClient ewbTMClient, @Qualifier("ewbClassificationClient") WebClient ewbClassificationClient) {
+        this.ewbTMClient = ewbTMClient;
+        this.ewbClassificationClient = ewbClassificationClient;
     }
 
     public List<String> getAllCollections() {
-        return ewbClient.get().uri("/collections/listCollections").accept(MediaType.APPLICATION_JSON)
+        return ewbTMClient.get().uri("/collections/listCollections").accept(MediaType.APPLICATION_JSON)
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<String>>() {
                 })).block();
     }
 
     public List<String> getAllCorpus() {
-        return ewbClient.get().uri("/corpora/listAllCorpus")
+        return ewbTMClient.get().uri("/corpora/listAllCorpus")
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<String>>() {
                 })).block();
     }
 
     public List<String> getModelsForCorpora(String corpora) {
-        return ewbClient.get().uri("/corpora/listCorpusModels", builder -> builder.queryParam("corpus_col", corpora).build())
+        return ewbTMClient.get().uri("/corpora/listCorpusModels", builder -> builder.queryParam("corpus_col", corpora).build())
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<String>>() {
                 })).block();
     }
 
     public List<String> getAllModels() {
-        return ewbClient.get().uri("/models/listAllModels")
+        return ewbTMClient.get().uri("/models/listAllModels")
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<String>>() {
                 })).block();
     }
 
     public List<Map<String, Object>> queryCollection(CollectionQuery query) {
-        return ewbClient.get().uri("/collections/query", uriBuilder -> WebClientUtils.buildParameters(uriBuilder, query))
+        return ewbTMClient.get().uri("/collections/query", uriBuilder -> WebClientUtils.buildParameters(uriBuilder, query))
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
                 })).block();
     }
@@ -83,7 +86,7 @@ public class EWBService {
     }
 
     private List<SemanticsModel> querySemanticsRelationshipsInternal(SemanticsQuery query) {
-        return ewbClient.get().uri("/queries/getDocsWithHighSimWithDocByid", uriBuilder -> WebClientUtils.buildParameters(uriBuilder, query))
+        return ewbTMClient.get().uri("/queries/getDocsWithHighSimWithDocByid", uriBuilder -> WebClientUtils.buildParameters(uriBuilder, query))
                 .exchangeToMono(mono -> {
                     if (mono.statusCode() != HttpStatus.OK) {
                         return Mono.empty();
@@ -93,19 +96,19 @@ public class EWBService {
     }
 
     public List<Map<String, Object>> queryLargeThetas(LargeThetasQuery query) {
-        return ewbClient.get().uri("/queries/getDocsWithThetasLargerThanThr", uriBuilder -> WebClientUtils.buildParameters(uriBuilder, query))
+        return ewbTMClient.get().uri("/queries/getDocsWithThetasLargerThanThr", uriBuilder -> WebClientUtils.buildParameters(uriBuilder, query))
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
                 })).block();
     }
 
     public Integer queryNrDocsColl(String collection) {
-        return Objects.requireNonNull(ewbClient.get().uri("/queries/getNrDocsColl", builder -> builder.queryParam("collection", collection).build())
+        return Objects.requireNonNull(ewbTMClient.get().uri("/queries/getNrDocsColl", builder -> builder.queryParam("collection", collection).build())
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<Map<String, Integer>>() {
                 })).block()).entrySet().stream().findFirst().orElse(Map.entry("", -1)).getValue();
     }
 
     public List<EWBPrettyTheta> queryThetas(ThetasQuery query) {
-        String response = Objects.requireNonNull(ewbClient.get().uri("/queries/getThetasDocById", uriBuilder -> WebClientUtils.buildParameters(uriBuilder, query))
+        String response = Objects.requireNonNull(ewbTMClient.get().uri("/queries/getThetasDocById", uriBuilder -> WebClientUtils.buildParameters(uriBuilder, query))
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {
                 })).block()).entrySet().stream().findFirst().orElse(Map.entry("", "")).getValue();
         List<String> thetas = List.of(response.split(" "));
@@ -122,13 +125,13 @@ public class EWBService {
     }
 
     public List<String> queryCollectionMetadata(String corpus) {
-        return Objects.requireNonNull(ewbClient.get().uri("/queries/getCorpusMetadataFields", builder -> builder.queryParam("corpus_collection", corpus).build())
+        return Objects.requireNonNull(ewbTMClient.get().uri("/queries/getCorpusMetadataFields", builder -> builder.queryParam("corpus_collection", corpus).build())
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<Map<String, List<String>>>() {
                 })).block()).entrySet().stream().findFirst().orElse(Map.entry("", List.of())).getValue();
     }
 
     public List<String> queryDocsInternal(DocsQuery query) {
-        return Objects.requireNonNull(ewbClient.get().uri("/queries/getDocsWithString", builder -> WebClientUtils.buildParameters(builder, query))
+        return Objects.requireNonNull(ewbTMClient.get().uri("/queries/getDocsWithString", builder -> WebClientUtils.buildParameters(builder, query))
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<Map<String, String>>>() {
                 })).block()).stream().map(stringStringMap -> stringStringMap.entrySet().stream().findFirst().orElse(Map.entry("", "")).getValue()).collect(Collectors.toList());
     }
@@ -156,7 +159,7 @@ public class EWBService {
     }
 
     public Map<String, Object> getDocMetadata(String corpus, String docId) {
-        return Objects.requireNonNull(ewbClient.get().uri("/queries/getMetadataDocById", builder ->
+        return Objects.requireNonNull(ewbTMClient.get().uri("/queries/getMetadataDocById", builder ->
                         builder.queryParam("corpus_collection", corpus).queryParam("doc_id", docId).build())
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
                 })).block()).stream().peek(doc -> {
@@ -168,7 +171,7 @@ public class EWBService {
     }
 
     public List<EWBTopicModel> getTopics(String model) {
-        return ewbClient.get().uri("/queries/getTopicsLabels", builder -> builder.queryParam("model_collection", model).build())
+        return ewbTMClient.get().uri("/queries/getTopicsLabels", builder -> builder.queryParam("model_collection", model).build())
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBTopicModel>>() {
                 })).block();
     }
@@ -300,7 +303,7 @@ public class EWBService {
     }
 
     private List<Map<String, String>> getThetasAndDates(EWBThetaAndDateQuery query) {
-        return this.ewbClient.get().uri("/queries/getThetasAndDateAllDocs", builder -> WebClientUtils.buildParameters(builder, query))
+        return this.ewbTMClient.get().uri("/queries/getThetasAndDateAllDocs", builder -> WebClientUtils.buildParameters(builder, query))
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<Map<String, String>>>() {
                 })).block();
     }
@@ -331,7 +334,7 @@ public class EWBService {
     }
 
     public List<EWBTopDoc> getTopicTopDocs(TopicTopDocQuery query) {
-        List<EWBTopDoc> results = Objects.requireNonNull(ewbClient.get().uri("/queries/getTopicTopDocs/", builder -> WebClientUtils.buildParameters(builder, query))
+        List<EWBTopDoc> results = Objects.requireNonNull(ewbTMClient.get().uri("/queries/getTopicTopDocs/", builder -> WebClientUtils.buildParameters(builder, query))
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBTopDocResponse>>() {
                 })).block()).stream().map(doc -> new EWBTopDoc(doc.getId(), doc.getThetas().get(0).getTheta(), doc.getWords())).collect(Collectors.toList());
         CollectionQuery collectionQuery = new CollectionQuery();
@@ -424,7 +427,7 @@ public class EWBService {
     }
 
     private List<EWBTopicMetadata> getTopicMetadataInternal(EWBTopicModelInfoQuery query) {
-        return this.ewbClient.get().uri("/queries/getModelInfo/", builder -> WebClientUtils.buildParameters(builder, query))
+        return this.ewbTMClient.get().uri("/queries/getModelInfo/", builder -> WebClientUtils.buildParameters(builder, query))
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBTopicMetadata>>() {
                 })).block();
     }
@@ -471,14 +474,14 @@ public class EWBService {
     }
 
     private List<EWBScore> getCorrelatedTopicsInternal(EWBCorrelatedTopicsQuery query) {
-        return this.ewbClient.get().uri("/queries/getMostCorrelatedTopics/", builder -> WebClientUtils.buildParameters(builder, query))
+        return this.ewbTMClient.get().uri("/queries/getMostCorrelatedTopics/", builder -> WebClientUtils.buildParameters(builder, query))
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBScore>>() {}))
                 .block();
     }
 
     public List<PrettySemanticsModel> listSimilarDocsByText(EWBSimilarTextQuery query) {
         List<PrettySemanticsModel> result = new ArrayList<>();
-        List<SemanticsModel> semanticsModels = this.ewbClient.get().uri("/queries/getDocsSimilarToFreeText/", builder -> WebClientUtils.buildParameters(builder, query))
+        List<SemanticsModel> semanticsModels = this.ewbTMClient.get().uri("/queries/getDocsSimilarToFreeText/", builder -> WebClientUtils.buildParameters(builder, query))
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<SemanticsModel>>() {}))
                 .block();
 
