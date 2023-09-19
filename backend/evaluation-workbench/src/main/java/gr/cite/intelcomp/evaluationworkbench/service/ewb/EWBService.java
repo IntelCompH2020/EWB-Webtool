@@ -518,4 +518,18 @@ public class EWBService {
                 }))
                 .block();
     }
+
+    public List<String> list_avail_taxonomies() {
+        return this.ewbClassificationClient.get().uri("/classification/list_avail_taxonomies/")
+                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<String>>() {
+                }))
+                .block();
+    }
+
+    public List<ClassificationResponse> classify() {
+        return Objects.requireNonNull(this.ewbClassificationClient.get().uri("/classification/classify/")
+                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<ClassificationModel>() {
+                }))
+                .block(), "Classification service response is null").getResponseModel();
+    }
 }

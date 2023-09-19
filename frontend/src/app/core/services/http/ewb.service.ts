@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Classification } from '@app/core/model/ewb/classification.model';
 import { HighSimDoc } from '@app/core/model/ewb/high-sim-doc.model';
 import { EWBSimilarityScore } from '@app/core/model/ewb/score-similarity.model';
 import { Theta } from '@app/core/model/ewb/theta.model';
@@ -6,9 +7,9 @@ import { TopDoc } from '@app/core/model/ewb/top-doc.model';
 import { TopicBeta, TopicMetadata } from '@app/core/model/ewb/topic-metadata.model';
 import { TopicRelation } from '@app/core/model/ewb/topic-relation.model';
 import { Topic } from '@app/core/model/ewb/topic.model';
+import { ClassificationQuery } from '@app/core/query/classification-query.lookup';
 import { DocQuery } from '@app/core/query/docs.lookup';
 import { HighSimDocLookup } from '@app/core/query/high-sim-doc.lookup';
-import { LargeThetaQuery } from '@app/core/query/large-theta.lookup';
 import { EWBScoreSimilarityQuery } from '@app/core/query/score-similarity.lookup';
 import { SimilatiryPairQuery } from '@app/core/query/similarities-pair-query.lookup';
 import { TextSimilarityQuery } from '@app/core/query/text-similarity.lookup';
@@ -137,6 +138,14 @@ export class EwbService {
 
   getPairsOfDocsWithHighSim(query: EWBScoreSimilarityQuery): Observable<QueryResult<EWBSimilarityScore>> {
     return this.http.post<QueryResult<EWBSimilarityScore>>(`${this.apiBase}/getPairsOfDocsWithHighSim`, query);
+  }
+
+  list_avail_taxonomies(): Observable<QueryResult<String>> {
+    return this.http.get<QueryResult<String>>(`${this.apiBase}/list_avail_taxonomies`);
+  }
+
+  classify(query: ClassificationQuery): Observable<QueryResult<Classification>> {
+    return this.http.post<QueryResult<Classification>>(`${this.apiBase}/getPairsOfDocsWithHighSim`, query);
   }
 
 }

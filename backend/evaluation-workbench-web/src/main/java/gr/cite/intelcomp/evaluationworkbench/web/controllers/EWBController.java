@@ -144,5 +144,17 @@ public class EWBController {
         return new QueryResult<>(similarityScores, similarityScores.size());
     }
 
+    @GetMapping("list_avail_taxonomies")
+    public QueryResult<String> list_avail_taxonomies() {
+        List<String> taxonomies = service.list_avail_taxonomies();
+        return new QueryResult<>(taxonomies, taxonomies.size());
+    }
+
+    @PostMapping("classify")
+    public QueryResult<ClassificationResponse> classify() {
+        List<ClassificationResponse> responseList = service.classify();
+        return new QueryResult<>(responseList, responseList.size());
+    }
+
 
 }
