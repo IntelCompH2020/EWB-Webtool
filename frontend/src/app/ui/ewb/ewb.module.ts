@@ -16,30 +16,28 @@ import { DocumentSearchComponent } from './modules/document-search/document-sear
 import { DocumentSearchViewComponent } from './document-search-view/document-search-view.component';
 import { CorpusModelModule } from '@common/modules/corpus-model/corpus-model.module';
 
-
-
 @NgModule({
   declarations: [
     EwbComponent,
     ModelOverviewComponent,
     TopicViewComponent,
     DocumentSearchComponent,
-	DocumentSearchViewComponent,
+    DocumentSearchViewComponent,
     SimilaritiesComponent,
     DocumentViewComponent
   ],
   imports: [
     CommonUiModule,
-	CommonFormsModule,
+    CommonFormsModule,
     EwbRoutingModule,
-	MatGridListModule,
-	CdkScrollableModule,
-	ListingModule,
-	NgxEchartsModule.forRoot({
-		echarts: () => import('echarts')
-	}),
-	DirectiveModule,
-	CorpusModelModule
+    MatGridListModule,
+    CdkScrollableModule,
+    ListingModule,
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts')
+    }),
+    DirectiveModule,
+    CorpusModelModule
   ]
 })
 export class EwbModule { }

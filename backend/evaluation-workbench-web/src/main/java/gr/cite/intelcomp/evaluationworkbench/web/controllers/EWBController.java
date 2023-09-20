@@ -151,10 +151,9 @@ public class EWBController {
     }
 
     @PostMapping("classify")
-    public QueryResult<ClassificationResponse> classify() {
-        List<ClassificationResponse> responseList = service.classify();
+    public QueryResult<ClassificationResponse> classify(@RequestBody ClassificationQuery query) {
+        List<ClassificationResponse> responseList = service.classify(query);
         return new QueryResult<>(responseList, responseList.size());
     }
-
 
 }

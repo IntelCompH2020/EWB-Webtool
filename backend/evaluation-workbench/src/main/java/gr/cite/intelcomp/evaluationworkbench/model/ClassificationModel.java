@@ -1,15 +1,18 @@
 package gr.cite.intelcomp.evaluationworkbench.model;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ClassificationModel extends HashMap<String, List<String>> {
+public class ClassificationModel {
 
-    public List<ClassificationResponse> getResponseModel() {
-        return values().stream().map(val -> {
+    public static List<ClassificationResponse> getResponseModel(Map<String, List<Object>> model) {
+        return model.values().stream().map(val -> {
             ClassificationResponse response = new ClassificationResponse();
-            response.setType(val.get(1));
-            response.setValue(Float.valueOf(val.get(2)));
+            if (val.get(1) == null)
+                response.setType(val.get(0).toString());
+            else
+                response.setType(val.get(1).toString());
+            response.setValue(Float.valueOf(val.get(2).toString()));
             return response;
         }).toList();
     }

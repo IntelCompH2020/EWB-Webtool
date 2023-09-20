@@ -251,6 +251,7 @@ public class EWBService {
         }
         for (Map<String, Object> doc : docs) {
             if (doc.containsKey(topicField)) {
+                @SuppressWarnings("unchecked")
                 List<EWBTheta> topics = (List<EWBTheta>) doc.get(topicField);
                 if (topics != null) {
                     for (EWBTheta topic : topics) {
@@ -526,10 +527,12 @@ public class EWBService {
                 .block();
     }
 
-    public List<ClassificationResponse> classify() {
-        return Objects.requireNonNull(this.ewbClassificationClient.get().uri("/classification/classify/")
-                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<ClassificationModel>() {
+    @SuppressWarnings("unchecked")
+    public List<ClassificationResponse> classify(ClassificationQuery query) {
+        Object response = Objects.requireNonNull(this.ewbClassificationClient.get().uri("/classification/classify/", builder -> WebClientUtils.buildParameters(builder, query))
+                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<>() {
                 }))
-                .block(), "Classification service response is null").getResponseModel();
+                .block(), "Classification service response is null");
+        return ClassificationModel.getResponseModel((LinkedHashMap<String, List<Object>>) response);
     }
 }

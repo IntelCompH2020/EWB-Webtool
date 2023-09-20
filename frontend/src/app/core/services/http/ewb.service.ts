@@ -145,7 +145,7 @@ export class EwbService {
   }
 
   classify(query: ClassificationQuery): Observable<QueryResult<Classification>> {
-    return this.http.post<QueryResult<Classification>>(`${this.apiBase}/getPairsOfDocsWithHighSim`, query);
+    return this.http.post<QueryResult<Classification>>(`${this.apiBase}/classify`, query);
   }
 
 }

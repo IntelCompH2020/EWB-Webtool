@@ -951,6 +951,9 @@
 				"SIMILAR-DOC": "Similarity of a document in the corpus to others",
 				"SIMILAR-TEXT": "Similarity of an inputted document and others in the corpus"
 			}
+		},
+		"CLASSIFICATION-COMPONENT": {
+			"TAXONOMY": "Taxonomy"
 		}
 	},
 	"USER-SERVICE": {
