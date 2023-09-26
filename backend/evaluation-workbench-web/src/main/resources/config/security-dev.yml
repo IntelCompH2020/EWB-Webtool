@@ -4,4 +4,4 @@ web:
       resource:
         token-type: JWT #| opaque
         jwt:
-          issuer-uri: 
+          issuer-uri: ${IDP_JWT_ISSUER_URI}
