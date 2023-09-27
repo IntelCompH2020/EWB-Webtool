@@ -19,7 +19,7 @@ public class EWBSimilarityScoreQuery {
     private Integer year;
 
     @ParameterName("num_records")
-    private Double records;
+    private Integer records;
 
     public String getCorpus() {
         return corpus;
@@ -61,11 +61,11 @@ public class EWBSimilarityScoreQuery {
         this.year = year;
     }
 
-    public Double getRecords() {
+    public Integer getRecords() {
         return records;
     }
 
-    public void setRecords(Double records) {
+    public void setRecords(Integer records) {
         this.records = records;
     }
 }

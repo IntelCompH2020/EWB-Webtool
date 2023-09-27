@@ -108,8 +108,9 @@ public class EWBController {
     }
 
     @PostMapping("similaritiesPairs")
-    public Map<String, Double> getSimilarityPair(@RequestBody SemanticsPairQuery semanticsPairQuery) {
-        return this.service.getSimilarityPairs(semanticsPairQuery);
+    public QueryResult<EWBSimilarityScore> getSimilarityPair(@RequestBody EWBSimilarityScoreQuery semanticsPairQuery) {
+        List<EWBSimilarityScore> similarityScores = this.service.getSimilarityPairs(semanticsPairQuery);
+        return new QueryResult<>(similarityScores, similarityScores.size());
     }
 
     @GetMapping("topics/hierarchical")
@@ -136,12 +137,6 @@ public class EWBController {
     public QueryResult<PrettySemanticsModel> listDocsWithHighSimilarityToText(@RequestBody EWBSimilarTextQuery query) {
         List<PrettySemanticsModel> collections = service.listSimilarDocsByText(query);
         return new QueryResult<>(collections, collections.size());
-    }
-
-    @PostMapping("getPairsOfDocsWithHighSim")
-    public QueryResult<EWBSimilarityScore> getPairsOfDocsWithHighSim(@RequestBody EWBSimilarityScoreQuery query) {
-        List<EWBSimilarityScore> similarityScores = service.getPairsOfDocsWithHighSim(query);
-        return new QueryResult<>(similarityScores, similarityScores.size());
     }
 
     @GetMapping("list_avail_taxonomies")

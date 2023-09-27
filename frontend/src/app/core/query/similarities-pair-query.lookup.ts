@@ -3,11 +3,10 @@ import { FormBuilder, Validators } from "@angular/forms";
 export class SimilatiryPairQuery {
 	corpus: string;
     model: string;
-    lowerPercent: number;
-    higherPercent: number;
+    lowerLimit: number;
+    upperLimit: number;
     year: number;
-    start: number;
-    rows: number;
+    records: number;
 
 	private formBuilder: FormBuilder = new FormBuilder();
 
@@ -15,11 +14,10 @@ export class SimilatiryPairQuery {
 		return this.formBuilder.group({
 			corpus: [{value: this.corpus, disabled: false}, Validators.required],
 			model: [{value: this.model, disabled: false}, Validators.required],
-			lowerPercent: [{value: this.lowerPercent, disabled: false}],
-			higherPercent: [{value: this.higherPercent, disabled: false}],
-			year: [{value: this.year, disabled: false}],
-			start: [{value: this.start, disabled: false}],
-			rows: [{value: this.rows, disabled: false}]
+			lowerLimit: [{value: this.lowerLimit, disabled: false}, Validators.required],
+			upperLimit: [{value: this.upperLimit, disabled: false}, Validators.required],
+			year: [{value: this.year, disabled: false}, Validators.required],
+			records: [{value: this.records, disabled: false}, Validators.required]
 		});
 	}
 }

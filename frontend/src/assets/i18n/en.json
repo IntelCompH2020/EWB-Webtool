@@ -949,7 +949,8 @@
 			"SIMILARITIES-COMPONENT": {
 				"OPTION-LABEL": "Option for document similarity search",
 				"SIMILAR-DOC": "Similarity of a document in the corpus to others",
-				"SIMILAR-TEXT": "Similarity of an inputted document and others in the corpus"
+				"SIMILAR-TEXT": "Similarity of an inputted document and others in the corpus",
+				"SIMILAR-BETWEEN": "Similarity among pairs of documents in the corpus"
 			}
 		},
 		"CLASSIFICATION-COMPONENT": {

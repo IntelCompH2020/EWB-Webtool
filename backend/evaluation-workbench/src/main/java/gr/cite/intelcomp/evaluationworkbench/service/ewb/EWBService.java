@@ -379,53 +379,11 @@ public class EWBService {
         return this.getTopicMetadataInternal(query).stream().filter(topicMetadata -> topicMetadata.getId().equals(topicId)).map(EWBTopicMetadata::getVocab).flatMap(Collection::stream).sorted(Comparator.comparingInt(EWBTopicBeta::getBeta).reversed()).collect(Collectors.toList());
     }
 
-    public Map<String, Double> getSimilarityPairs(SemanticsPairQuery semanticsPairQuery) {
-        Map<String, Double> result = new HashMap<>();
-        Integer count = this.queryNrDocsColl(semanticsPairQuery.getModel());
-        LargeThetasQuery ltquery = new LargeThetasQuery();
-        ltquery.setCorpusCollection(semanticsPairQuery.getCorpus());
-        ltquery.setModelName(semanticsPairQuery.getModel());
-        ltquery.setThreshold(0);
-        for (int i = 0; i < count; i++) {
-            ltquery.setTopicId(String.valueOf(i));
-            List<Map<String, Object>> docs = this.queryLargeThetas(ltquery);
-            docs.forEach(doc -> {
-                String docId = doc.get("id").toString();
-                List<SemanticsModel> semanticsModelList = SemanticsModel.generateModels(doc.get("sim_" + semanticsPairQuery.getModel()).toString());
-                semanticsModelList = semanticsModelList.stream().filter(semanticsModel -> semanticsModel.getScore() >= semanticsPairQuery.getLowerPercent() && semanticsModel.getScore() <= semanticsPairQuery.getHigherPercent()).collect(Collectors.toList());
-                for (SemanticsModel semanticsModel : semanticsModelList) {
-                    String id = docId + "-" + semanticsModel.getId();
-                    String di = semanticsModel.getId() + "-" + docId;
-                    if (result.containsKey(id) || result.containsKey(di)) {
-                        continue;
-                    }
-                    result.put(id, semanticsModel.getScore());
-                }
-            });
-        }
-        /*DocsQuery docsQuery = new DocsQuery();
-        docsQuery.setCorpusCollection(semanticsPairQuery.getCorpus());
-        docsQuery.setLike("*");
-        List<String> docIds = this.queryDocsInternal(docsQuery);
-        for (String docId : docIds) {
-            SemanticsQuery semanticsQuery = new SemanticsQuery();
-            semanticsQuery.setCorpusCollection(semanticsPairQuery.getCorpus());
-            semanticsQuery.setModelName(semanticsPairQuery.getModel());
-            semanticsQuery.setDocId(docId);
-            List<SemanticsModel> semanticsModelList = this.querySemanticsRelationships(semanticsQuery);
-            if (semanticsModelList != null) {
-                semanticsModelList = semanticsModelList.stream().filter(semanticsModel -> semanticsModel.getScore() >= semanticsPairQuery.getLowerPercent() && semanticsModel.getScore() <= semanticsPairQuery.getHigherPercent()).collect(Collectors.toList());
-                for (SemanticsModel semanticsModel : semanticsModelList) {
-                    String id = docId + "-" + semanticsModel.getId();
-                    String di = semanticsModel.getId() + "-" + docId;
-                    if (result.containsKey(id) || result.containsKey(di)) {
-                        continue;
-                    }
-                    result.put(id, semanticsModel.getScore());
-                }
-            }
-        }*/
-        return result.entrySet().stream().skip(semanticsPairQuery.getStart()).limit(semanticsPairQuery.getRows()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    public List<EWBSimilarityScore> getSimilarityPairs(EWBSimilarityScoreQuery query) {
+        return this.ewbTMClient.get().uri("/queries/getPairsOfDocsWithHighSim/", builder -> WebClientUtils.buildParameters(builder, query))
+                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBSimilarityScore>>() {
+                }))
+                .block();
     }
 
     private List<EWBTopicMetadata> getTopicMetadataInternal(EWBTopicModelInfoQuery query) {
@@ -511,13 +469,6 @@ public class EWBService {
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
         return result;
-    }
-
-    public List<EWBSimilarityScore> getPairsOfDocsWithHighSim(EWBSimilarityScoreQuery query) {
-        return this.ewbTMClient.get().uri("/queries/getPairsOfDocsWithHighSim/", builder -> WebClientUtils.buildParameters(builder, query))
-                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBSimilarityScore>>() {
-                }))
-                .block();
     }
 
     public List<String> list_avail_taxonomies() {
