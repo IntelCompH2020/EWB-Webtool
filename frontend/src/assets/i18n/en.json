@@ -88,7 +88,7 @@
 		},
 		"HOME-COMPONENT": {
 			"START": "Start",
-			"START-OVERVIEW": "Here is an overview of Intelcomp's Model Trainer",
+			"START-OVERVIEW": "Here is an overview of Intelcomp's Evaluation Workbench",
 			"CORPUS": "Corpus",
 			"CORPUS-DESCRIPTION": "Use this space to select a corpus from the Data Lake to be used with the training of a model. You can also create a new corpus by merging other available ones or select a subcorpus based on a category.",
 			"MODELS": "Models",
@@ -928,7 +928,7 @@
 			"STI-VIEWER-DESCRIPTION": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et a, autem nesciunt cumque molestiae omnis temporibus saepe reprehenderit debitis consectetur ullam, ut harum laborum explicabo animi, unde ducimus! Nostrum, a!",
 			"DOCUMENT-EXPLORER": "Document Explorer",
 			"DOCUMENT-EXPLORER-DESCRIPTION": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et a, autem nesciunt cumque molestiae omnis temporibus saepe reprehenderit debitis consectetur ullam, ut harum laborum explicabo animi, unde ducimus! Nostrum, a!",
-			"INTERACTIVE-MODEL-TRAINER": "Interactive model trainer",
+			"INTERACTIVE-MODEL-TRAINER": "Evaluation Workbench",
 			"INTERACTIVE-MODEL-TRAINER-DESCRIPTION": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et a, autem nesciunt cumque molestiae omnis temporibus saepe reprehenderit debitis consectetur ullam, ut harum laborum explicabo animi, unde ducimus! Nostrum, a!",
 			"INTELCOMP-DATA-CATALOGUE": "Intelcomp Data Catalogue",
 			"INTELCOMP-DATA-CATALOGUE-DESCRIPTION": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et a, autem nesciunt cumque molestiae omnis temporibus saepe reprehenderit debitis consectetur ullam, ut harum laborum explicabo animi, unde ducimus! Nostrum, a!"
