@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment # Create a deployment
+metadata:
+  name: ewb-backend-apis # Set the name of the deployment
+spec:
+  replicas: 1 # Set 3 deployment replicas
+  selector:
+    matchLabels:
+      app: ewb-backend-apis
+  template:
+    metadata:
+      labels:
+        app: ewb-backend-apis
+    spec:
+      containers:
+        - name: ewb-backend-api
+          image: registry.gitlab.bsc.es/support/intelcomp/ic-ewb-webtool-api:1.0.1
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PROFILE
+              value: "stage"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+          volumeMounts:
+            - name: "ewb-backend-api-config"
+              mountPath: "/config"
+              subPath: "."
+            - name: logs
+              mountPath: "/logs"
+              subPathExpr: $(POD_NAME)_$(POD_UID)/api
+      volumes:
+        - name: ewb-backend-api-config
+          configMap:
+            name: ewb-api
+        - name: logs
+          persistentVolumeClaim:
+            claimName: logs
+      imagePullSecrets:
+        - name: bsc-docker-reg-credentials

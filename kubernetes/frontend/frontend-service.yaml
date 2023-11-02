@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service # Create service
+metadata:
+  name: ewb-frontend # Sets the service name
+  labels:
+    app: ewb-frontend # Defines app to create service for
+spec:
+  ports:
+    - port: 8080 # Sets the port to run the postgres application
+      name: ewb-frontend
+  selector:
+    app: ewb-frontend

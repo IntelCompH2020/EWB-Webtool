@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment # Create a deployment
+metadata:
+  name: ewb-proxy # Set the name of the deployment
+spec:
+  replicas: 1 # Set 3 deployment replicas
+  selector:
+    matchLabels:
+      app: ewb-proxy
+  template:
+    metadata:
+      labels:
+        app: ewb-proxy
+    spec:
+      containers:
+        - name: ewb-proxy
+          image: nginx:mainline-alpine # Docker image
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: "ewb-proxy-config"
+              mountPath: "/etc/nginx/conf.d/default.conf"
+              subPath: "ProxyNginx.conf"
+            - name: "ewb-proxy-config"
+              mountPath: "/etc/nginx/nginx.conf"
+              subPath: "nginx.conf"
+      volumes:
+        - name: ewb-proxy-config
+          configMap:
+            name: ewb-proxy

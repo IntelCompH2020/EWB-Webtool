@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service # Create service
+metadata:
+  name: zoo-service # Sets the service name
+  labels:
+    app: zoo-service # Defines app to create service for
+spec:
+  ports:
+    - port: 2181
+      name: ewb-zoo
+  selector:
+    app: zoo-service

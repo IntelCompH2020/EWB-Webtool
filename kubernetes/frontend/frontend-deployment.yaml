@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment # Create a deployment
+metadata:
+  name: ewb-frontend # Set the name of the deployment
+spec:
+  replicas: 1 # Set 3 deployment replicas
+  selector:
+    matchLabels:
+      app: ewb-frontend
+  template:
+    metadata:
+      labels:
+        app: ewb-frontend
+    spec:
+      containers:
+        - name: ewb-frontend
+          image: registry.gitlab.bsc.es/support/intelcomp/ic-ewb-webtool-webapp:1.0.1
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: WEBAPP_BASE_URL
+              value: "/"
+          volumeMounts:
+            - name: "ewb-frontend-config"
+              mountPath: "/usr/share/nginx/html/assets/config.json"
+              subPath: "config.json"
+            - name: "ewb-frontend-config"
+              mountPath: "/etc/nginx/conf.d/default.conf"
+              subPath: "nginx.conf"
+      volumes:
+        - name: ewb-frontend-config
+          configMap:
+            name: ewb-frontend
+      imagePullSecrets:
+        - name: bsc-docker-reg-credentials

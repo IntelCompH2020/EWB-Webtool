@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service # Create service
+metadata:
+  name: ewb-external-backend-apis # Sets the service name
+  labels:
+    app: ewb-external-backend-apis # Defines app to create service for
+spec:
+  ports:
+    - port: 80
+      name: ewb-restapi
+    - port: 90
+      name: ewb-inferencer
+    - port: 8983
+      name: ewb-solr
+    - port: 2181
+      name: ewb-zoo
+  selector:
+    app: ewb-external-backend-apis

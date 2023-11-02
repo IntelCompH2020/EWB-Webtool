@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment # Create a deployment
+metadata:
+  name: solr-service # Set the name of the deployment
+spec:
+  replicas: 1 # Set 3 deployment replicas
+  selector:
+    matchLabels:
+      app: solr-service
+  template:
+    metadata:
+      labels:
+        app: solr-service
+    spec:
+      containers:
+        - name: ewb-solr
+          image: solr:9.1.1
+          imagePullPolicy: "IfNotPresent"
+          command: [ "docker-entrypoint.sh", "solr", "start", "-f", "-c", "-z", "zoo-service:2181", "-a", "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044 -Djute.maxbuffer=0x5000000" ]
+          ports:
+            - containerPort: 8983
+          volumeMounts:
+            - name: ewb-solr-data
+              mountPath: /var/solr
+            - name: ewb-solr-config
+              mountPath: /opt/solr/server/solr
+            - name: ewb-solr-plugins
+              mountPath: /opt/solr/dist/plugins
+      volumes:
+        - name: ewb-solr-data
+          persistentVolumeClaim:
+            claimName: ewb-solr-data-claim
+        - name: ewb-solr-config
+          persistentVolumeClaim:
+            claimName: ewb-solr-config-claim
+        - name: ewb-solr-plugins
+          persistentVolumeClaim:
+            claimName: ewb-solr-plugins-claim
+      imagePullSecrets:
+        - name: bsc-docker-reg-credentials

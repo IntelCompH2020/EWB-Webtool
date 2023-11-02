@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment # Create a deployment
+metadata:
+  name: zoo-service # Set the name of the deployment
+spec:
+  replicas: 1 # Set 3 deployment replicas
+  selector:
+    matchLabels:
+      app: zoo-service
+  template:
+    metadata:
+      labels:
+        app: zoo-service
+    spec:
+      containers:
+        - name: ewb-zoo
+          image: zookeeper:3.8
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 2181
+          env:
+            - name: JVMFLAGS
+              value: "-Djute.maxbuffer=50000000"
+          volumeMounts:
+            - name: ewb-zoo-data
+              mountPath: /data
+            - name: ewb-zoo-logs
+              mountPath: /datalog
+      volumes:
+        - name: ewb-zoo-data
+          persistentVolumeClaim:
+            claimName: ewb-zoo-data-claim
+        - name: ewb-zoo-logs
+          persistentVolumeClaim:
+            claimName: ewb-zoo-logs-claim
+      imagePullSecrets:
+        - name: bsc-docker-reg-credentials

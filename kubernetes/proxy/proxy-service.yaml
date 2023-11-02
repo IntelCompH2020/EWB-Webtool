@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service # Create service
+metadata:
+  name: ewb-proxy # Sets the service name
+  labels:
+    app: ewb-proxy # Defines app to create service for
+spec:
+  externalIPs:  
+    - 192.168.20.132 
+  type: NodePort # Sets the service type
+  ports:
+    - port: 8080 # Sets the port to run the postgres application
+      nodePort: 32757
+  selector:
+    app: ewb-proxy

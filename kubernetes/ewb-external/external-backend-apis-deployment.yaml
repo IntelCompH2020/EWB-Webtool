@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment # Create a deployment
+metadata:
+  name: ewb-external-backend-apis # Set the name of the deployment
+spec:
+  replicas: 1 # Set 3 deployment replicas
+  selector:
+    matchLabels:
+      app: ewb-external-backend-apis
+  template:
+    metadata:
+      labels:
+        app: ewb-external-backend-apis
+    spec:
+      containers:
+        - name: ewb-restapi
+          image: registry.gitlab.bsc.es/support/intelcomp/ic-evaluation-workbench-external-tm:1.0.5
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 82
+          env:
+            - name: SOLR_URL
+              value: "http://solr-service:8983"
+            - name: INFERENCE_URL
+              value: "http://ewb-external-backend-apis:90"
+          volumeMounts:
+            - name: "ewb-external-backend-api-config"
+              mountPath: "/config"
+              subPath: "."
+            - name: ewb-data
+              mountPath: /data
+        - name: ewb-inferencer
+          image: registry.gitlab.bsc.es/support/intelcomp/ic-evaluation-workbench-external-inferencer:1.0.5
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 90
+          volumeMounts:
+            - name: "ewb-external-backend-api-config"
+              mountPath: "/config"
+              subPath: "."
+            - name: ewb-data
+              mountPath: /data
+        - name: ewb-classifier
+          image: registry.gitlab.bsc.es/support/intelcomp/ic-evaluation-workbench-external-classifier:1.0.5
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 100
+          volumeMounts:
+            - name: "ewb-external-backend-api-config"
+              mountPath: "/config"
+              subPath: "."
+            - name: ewb-data
+              mountPath: /data
+      volumes:
+        - name: ewb-external-backend-api-config
+          configMap:
+            name: ewb-external-api
+        - name: ewb-data
+          persistentVolumeClaim:
+            claimName: ewb-data-claim
+      imagePullSecrets:
+        - name: bsc-docker-reg-credentials

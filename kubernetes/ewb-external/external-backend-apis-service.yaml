@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service # Create service
+metadata:
+  name: ewb-external-backend-apis # Sets the service name
+  labels:
+    app: ewb-external-backend-apis # Defines app to create service for
+spec:
+  externalIPs:  
+    - 192.168.20.132 
+  type: NodePort # Sets the service type
+  ports:
+    - port: 82
+      name: ewb-restapi
+      nodePort: 32717
+    - port: 90
+      name: ewb-inferencer
+    - port: 100
+      name: ewb-classifier
+  selector:
+    app: ewb-external-backend-apis
