@@ -944,7 +944,20 @@
 				"HIERARCHICAL": "Hierarchical View",
 				"TEMPORAL": "Temporal View",
 				"SCALE": "Scale View",
-				"GRID": "Grid View"
+				"GRID": "Grid View",
+				"TOPIC-VIEWER": {
+					"TOP-WORDS": "Top Words",
+					"TOPIC-STATISTICS": "Topic Statistics",
+					"TOP-DOCUMENTS": "Top Documents",
+					"LISTING": {
+						"ID": "ID",
+						"SIZE": "Size",
+						"NUM-ACTIVE-DOCS": "Nr Active Docs",
+						"RELEVANCE": "Topic Relevance",
+						"COHERENCE": "Coherence",
+						"LABEL": "Label"
+					}
+				}
 			},
 			"SIMILARITIES-COMPONENT": {
 				"OPTION-LABEL": "Option for document similarity search",

@@ -6,7 +6,7 @@ export class TopicMetadata {
     topic_coherence: number;
     ndocs_active: number;
     tpc_descriptions: string[];
-    tpc_labels: string[];
+    tpc_labels: string;
     vocab: string[];
     coords: number[];
 }

@@ -12,6 +12,8 @@ import { GENERAL_ANIMATIONS } from '@app/animations';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import * as d3 from 'd3';
 import { Theta } from '@app/core/model/ewb/theta.model';
+import { TopicMetadata } from '@app/core/model/ewb/topic-metadata.model';
+import { TopDoc } from '@app/core/model/ewb/top-doc.model';
 
 @Component({
   selector: 'app-model-overview',
@@ -23,7 +25,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 
 	@Input() model: string;
 	@Input() corpus: string;
-	topics: Topic[] = [];
+	topics: TopicMetadata[] = [];
 	selectedView: string = '1';
 	chartOptions: EChartsOption = null;
 	useRelation: string = '1';
@@ -43,12 +45,17 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 			this.ewbService.listTopicsByModel(this.model)
 			.pipe(takeUntil(this._destroyed))
 			.subscribe((queryResult: QueryResult<Topic>) => {
-				this.topics = queryResult.items;
-				switch(this.selectedView) {
-					case '1':
-						this.makeDefaultViewOptions();
-					break;
-				}
+				queryResult.items.forEach((topic: Topic) =>
+				this.ewbService.getTopicMetadata(this.model, topic.id)
+					.pipe(takeUntil(this._destroyed))
+					.subscribe((result: TopicMetadata) => {
+						this.topics.push(result);
+						switch(this.selectedView) {
+							case '1':
+								this.makeDefaultViewOptions();
+							break;
+						}
+					}));
 			});
 		});
 	}
@@ -64,14 +71,15 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 	let x = 0;
 	let y = 0;
 	let index =0;
-	const nodes = this.topics.map((topic: Topic) => {
+	const nodes = this.topics.map((topic: TopicMetadata) => {
+		const size = 94 * (topic.topic_entropy * 2);
 		const data = {
 			id: topic.id,
 			name: topic.tpc_labels,
 			value: 0,
 			x: x,
 			y: y,
-			symbolSize: 94,
+			symbolSize: size,
 			label: {
 				show: true,
 				formatter: this.getTopWords(topic.id)
@@ -91,9 +99,9 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 		if (index === 9) {
 			index = 0;
 			x = 0;
-			y = y + (this.useRelation === '1' ? 0 : 94);
+			y = y + (this.useRelation === '1' ? 0 : size);
 		} else {
-			x = x + (this.useRelation === '1' ? 0 : 94);
+			x = x + (this.useRelation === '1' ? 0 : size);
 		}
 		index = index + 1;
 		return data;
@@ -250,10 +258,10 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 				depth: 1,
 				index: seriesData.length
 			});
-			(val[1] as Theta[]).forEach(doc => {
+			(val[1] as TopDoc[]).forEach(doc => {
 				seriesData.push({
 					id: `${val[0]}.${doc.id}`,
-					value: doc.theta,
+					value: doc.topic,
 					depth: 2,
 					index: seriesData.length
 				});
@@ -436,7 +444,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
   }
 
   private getTopicName(topicId: string): string {
-	return this.topics.filter((topic: Topic) => topic.id === topicId)[0].tpc_labels;
+	return this.topics.filter((topic: TopicMetadata) => topic.id === topicId)[0].tpc_labels;
   }
 
 }

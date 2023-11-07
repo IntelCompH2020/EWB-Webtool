@@ -310,18 +310,18 @@ public class EWBService {
                 })).block();
     }
 
-    public Map<String, List<EWBTheta>> getHierarchicalTopics(String corpus, String model) {
-        Map<String, List<EWBTheta>> result = new HashMap<>();
-        LargeThetasQuery largeThetasQuery = new LargeThetasQuery();
-        largeThetasQuery.setCorpusCollection(corpus);
-        largeThetasQuery.setModelName(model);
-        largeThetasQuery.setThreshold(950);
-        largeThetasQuery.setRows(10);
+    public Map<String, List<EWBTopDoc>> getHierarchicalTopics(String corpus, String model) {
+        TopicTopDocQuery topicTopDocQuery = new TopicTopDocQuery();
+        topicTopDocQuery.setCorpusCollection(corpus);
+        topicTopDocQuery.setModelName(model);
+        topicTopDocQuery.setRows(10L);
+        Map<String, List<EWBTopDoc>> result = new HashMap<>();
         Integer count = this.queryNrDocsColl(model);
         for (int i = 0; i < count; i++) {
-            largeThetasQuery.setTopicId(String.valueOf(i));
-            List<Map<String, Object>> docs = this.queryLargeThetas(largeThetasQuery);
-            final String topicId = "t" + i;
+            topicTopDocQuery.setTopicId(i);
+            List<EWBTopDoc> docs = this.getTopicTopDocs(topicTopDocQuery);
+            result.put("t" + i, docs);
+            /*final String topicId = "t" + i;
             result.put(topicId, docs.stream().map(doc -> {
                 List<EWBTheta> thetas = EWBTheta.mapToPojo(doc.get("doctpc_" + model).toString());
                 EWBTheta tres = null;
@@ -333,7 +333,7 @@ public class EWBService {
                         tres.setTheta(tres.getTheta() * Integer.parseInt(doc.get("nwords_per_doc").toString()));
                 }
                 return tres;
-            }).limit(10).collect(Collectors.toList()));
+            }).limit(10).collect(Collectors.toList()));*/
         }
         return result;
     }

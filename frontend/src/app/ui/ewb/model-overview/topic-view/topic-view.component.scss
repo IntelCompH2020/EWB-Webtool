@@ -18,6 +18,13 @@
 	float: inline-end;
 }
 
+.progress-value {
+	display: flex;
+	flex-direction: column;
+    justify-content: center;
+	text-align: center;
+}
+
 .empty-bar {
 	background-color: #e9ecef;
 }

@@ -114,7 +114,7 @@ public class EWBController {
     }
 
     @GetMapping("topics/hierarchical")
-    public Map<String, List<EWBTheta>> getHierarchicalTopics(@RequestParam String corpus, @RequestParam String model) {
+    public Map<String, List<EWBTopDoc>> getHierarchicalTopics(@RequestParam String corpus, @RequestParam String model) {
         return this.service.getHierarchicalTopics(corpus, model);
     }
 

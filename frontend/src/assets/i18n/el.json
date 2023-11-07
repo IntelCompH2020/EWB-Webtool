@@ -516,7 +516,33 @@
 			"INTELCOMP-DATA-CATALOGUE": "Intelcomp Data Catalogue",
 			"INTELCOMP-DATA-CATALOGUE-DESCRIPTION": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et a, autem nesciunt cumque molestiae omnis temporibus saepe reprehenderit debitis consectetur ullam, ut harum laborum explicabo animi, unde ducimus! Nostrum, a!"
 
-		}
+		},
+		"EWB-COMPONENT": {
+			"CORPUS": "Corpus",
+			"MODEL": "Μοντέλο",
+			"MODEL-OVERVIEW": "Επισκόπηση μοντέλου",
+			"DOCUMENT-SEARCH": "Αναζήτηση Εγγράφου",
+			"SIMILARITIES": "Ομιότητες",
+			"MODEL-OVERVIEW-COMPONENT": {
+				"DEFAULT": "Προεπιλεγμένη προβολή",
+				"HIERARCHICAL": "Ηεραρχική προβολή",
+				"TEMPORAL": "Χρονική προβολή",
+				"SCALE": "Scale View",
+				"GRID": "Grid View",
+				"TOPIC-VIEWER": {
+					"TOP-WORDS": "Top Words",
+					"TOPIC-STATISTICS": "Topic Statistics",
+					"TOP-DOCUMENTS": "Top Documents",
+					"LISTING": {
+						"ID": "ID",
+						"SIZE": "Size",
+						"NUM-ACTIVE-DOCS": "Nr Active Docs",
+						"RELEVANCE": "Topic Relevance",
+						"COHERENCE": "Coherence",
+						"LABEL": "Label"
+					}
+				}
+			},
 	},
 	"USER-SERVICE": {
 		"TENANT-CONFIGURATION": {
