@@ -14,6 +14,7 @@ import * as d3 from 'd3';
 import { Theta } from '@app/core/model/ewb/theta.model';
 import { TopicMetadata } from '@app/core/model/ewb/topic-metadata.model';
 import { TopDoc } from '@app/core/model/ewb/top-doc.model';
+import { DocumentViewComponent } from '../modules/document-view/document-view.component';
 
 @Component({
   selector: 'app-model-overview',
@@ -122,7 +123,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 							id: node.id + '-' + relatedNode.id,
 							source: node.id,
 							target: relatedNode.id,
-							value: value.score,
+							value: 100 - value.score,
 							lineStyle: {
 								width: 0
 							}
@@ -225,7 +226,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 			series: this.topics.map((topic, index) => {
 				return {
 					name: topic.tpc_labels,
-					id: topic.tpc_labels,
+					id: topic.id,
 					type: 'line',
 					stack: 'x',
 					areaStyle: {},
@@ -234,7 +235,15 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 					},
 					data: values.get(topic.id)
 				}
-			})
+			}),
+			toolbox: {
+				show: true,
+				feature: {
+					saveAsImage: {
+						type: 'png'
+					}
+				}
+			}
 		};
 		console.log(JSON.stringify(this.chartOptions));
 	});
@@ -254,14 +263,14 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 		Object.entries(result).forEach(val => {
 			seriesData.push({
 				id: `${val[0]}`,
-				value: this.getTopicName(val[0]),
+				value: this.getTopicRelevance(val[0]),
 				depth: 1,
 				index: seriesData.length
 			});
 			(val[1] as TopDoc[]).forEach(doc => {
 				seriesData.push({
 					id: `${val[0]}.${doc.id}`,
-					value: doc.topic,
+					value: doc.words,
 					depth: 2,
 					index: seriesData.length
 				});
@@ -401,18 +410,46 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
   }
 
   openDialog(event: any) {
-	if (this.selectedView === '1') {
-		this.dialog.open(TopicViewComponent, {
-			width: '85vw',
-			height: '80vh',
-			panelClass: 'topic-style',
-			data: {
-				corpus: this.corpus,
-				model: this.model,
-				topicId: event.data.id,
-				topicName: this.getTopicName(event.data.id)
+	switch(this.selectedView) {
+		case '1': {
+			this.dialog.open(TopicViewComponent, {
+				width: '85vw',
+				height: '80vh',
+				panelClass: 'topic-style',
+				data: {
+					corpus: this.corpus,
+					model: this.model,
+					topicId: event.data.id,
+					topicName: this.getTopicName(event.data.id)
+				}
+			});
+		}
+		case '3': {
+			if (event.data.depth === 1) {
+				this.dialog.open(TopicViewComponent, {
+					width: '85vw',
+					height: '80vh',
+					panelClass: 'topic-style',
+					data: {
+						corpus: this.corpus,
+						model: this.model,
+						topicId: event.data.id,
+						topicName: this.getTopicName(event.data.id)
+					}
+				});
+			} else if (event.data.depth === 2) {
+				this.ewbService.getDocument(this.corpus, (event.data.id as string).split('.')[1]).subscribe((doc: any) => {
+				this.dialog.open(DocumentViewComponent, {
+					width: '85vw',
+					height: '80vh',
+					panelClass: 'topic-style',
+					data: {
+						selectedDoc: doc
+					}
+				});
+			});
 			}
-		});
+		}
 	}
   }
 
@@ -445,6 +482,10 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 
   private getTopicName(topicId: string): string {
 	return this.topics.filter((topic: TopicMetadata) => topic.id === topicId)[0].tpc_labels;
+  }
+
+  private getTopicRelevance(topicId: string): number {
+	return this.topics.filter((topic: TopicMetadata) => topic.id === topicId)[0].topic_entropy;
   }
 
 }

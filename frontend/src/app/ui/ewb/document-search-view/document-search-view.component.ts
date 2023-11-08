@@ -58,6 +58,7 @@ export class DocumentSearchViewComponent extends BaseComponent implements OnInit
 			.pipe(takeUntil(this._destroyed))
 			.subscribe((result: QueryResult<Theta>) => {
 				thetas = result.items;
+				const max = thetas.map(theta => theta.theta).reduce((a, b) => a + b, 0);
 				this.chartOptions = {
 					tooltip: {
 						trigger: 'item'
@@ -71,7 +72,7 @@ export class DocumentSearchViewComponent extends BaseComponent implements OnInit
 						data: thetas.map((theta: Theta) => {
 							const data = {
 								id: theta.id,
-								name: theta.name,
+								name: `${theta.name} ${(theta.theta / max) * 100}%`,
 								value: theta.theta
 							}
 							return data;

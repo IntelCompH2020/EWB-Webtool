@@ -22,6 +22,16 @@ const appRoutes: Routes = [
 		loadChildren: () => import('@app/ui/classification/classification.module').then(m => m.ClassificationModule)
 	},
 	{
+		path: 'manual',
+		canLoad: [AuthGuard],
+		loadChildren: () => import('@app/ui/manual/manual.module').then(m => m.ManualModule)
+	},
+	{
+		path: 'faq',
+		canLoad: [AuthGuard],
+		loadChildren: () => import('@app/ui/faq/faq.module').then(m => m.FaqModule)
+	},
+	{
 		path: 'login',
 		loadChildren: () => import('@idp-service/ui/login/login.module').then(m => m.LoginModule)
 	},

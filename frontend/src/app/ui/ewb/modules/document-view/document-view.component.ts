@@ -22,7 +22,7 @@ export class DocumentViewComponent implements OnInit {
 
   ngOnInit(): void {
 	if (this.selectedDoc === null && this.dialogData !== null) {
-		this.selectedDoc = this.dialogData;
+		this.selectedDoc = this.dialogData.selectedDoc;
 	}
   }
 
