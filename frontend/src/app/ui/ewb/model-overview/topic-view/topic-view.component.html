@@ -65,7 +65,8 @@
 		<div class="progress-bar percent-bar" role="progressbar" [attr.aria-valuenow]="value"
 			[style]="'width: ' + value + '%'" aria-valuemin="0" aria-valuemax="100">
 			<!-- {{(value < 100 && value > 0) ? value : ''}} -->
+			<span *ngIf="value > 25">{{value | number: '1.0-2' }}%</span>
 		</div>
-		<span class="progress-value">{{value | number: '1.0-2' }}%</span>
+		<span class="progress-value" *ngIf="value < 25">{{value | number: '1.0-2' }}%</span>
 	</div>
 </ng-template>
