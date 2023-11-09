@@ -83,7 +83,8 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 			symbolSize: topic.alphas * 1000,
 			label: {
 				show: true,
-				formatter: this.getTopWords(topic.id)
+				formatter: this.getTopWords(topic.id),
+				fontSize: topic.alphas * 100
 			},
 			itemStyle: {
 				color: 'aliceblue'
@@ -163,6 +164,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 			series: {
 				type: 'graph',
 				layout: 'none',
+				zoom: 1,
 				nodes: nodes
 			}
 		};
