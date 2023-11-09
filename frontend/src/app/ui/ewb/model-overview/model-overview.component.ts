@@ -78,9 +78,9 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 			id: topic.id,
 			name: topic.tpc_labels,
 			value: 0,
-			x: x,
-			y: y,
-			symbolSize: size,
+			x: this.useRelation === '1' ? topic.coords[0] : x,
+			y: this.useRelation === '1' ? topic.coords[1] : y,
+			symbolSize: topic.alphas * 1000,
 			label: {
 				show: true,
 				formatter: this.getTopWords(topic.id)
@@ -110,55 +110,55 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 		return data;
 	});
 	const links = [];
-	if (this.useRelation === '1') {
-		this.ewbService.getTopicRelations(this.model)
-		.pipe(takeUntil(this._destroyed)).subscribe((relations) => {
-			nodes.forEach(node => {
-				const relation = relations.filter(r => r.id === node.id)[0];
-				relation.correlations.filter(c => c.id !== relation.id).forEach((value) => {
-					const relatedNode = nodes.filter(x => x.id === value.id)[0];
-					// const linkIndex = links.findIndex(link => link.id === relatedNode.id + '-' + node.id);
-					// if (linkIndex > -1) {
-					// 	links[linkIndex].value += value.score;
-					// } else {
-						links.push({
-							id: node.id + '-' + relatedNode.id,
-							source: node.id,
-							target: relatedNode.id,
-							value: value.score,
-							lineStyle: {
-								width: 0
-							}
-						});
-					//}
-					// const offset = value.score * 1.5;
-					// const xdelta = Math.abs(relatedNode.x - node.x);
-					// const ydelta = Math.abs(relatedNode.y - node.y);
-					// const xoffset = (relatedNode.x === node.x) ? 0 : (relatedNode.x > node.x) ? Math.min(offset, xdelta) : (Math.min(offset, xdelta)) * -1;
-					// const yoffset = (relatedNode.y === node.y) ? 0 : (relatedNode.y > node.y) ? Math.min(offset, ydelta) : (Math.min(offset, ydelta)) * -1;
-					// node.x = node.x + xoffset;
-					// node.y = node.y + yoffset;
-				});
-			});
-			this.chartOptions = {
-				series: {
-					type: 'graph',
-					layout: 'force',
-					roam: true,
-					autoCurveness: true,
-					nodes: nodes,
-					links: links,
-					nodeScaleRatio: 0, //GK: Why 0.6 is a TYPE???
-					force: {
-						repulsion: [0, 1],
-						edgeLength: [0, 1],
-						layoutAnimation: false
-					}
-				} as any
-			};
-			console.log(JSON.stringify(this.chartOptions));
-		});
-	} else {
+	// if (this.useRelation === '1') {
+	// 	this.ewbService.getTopicRelations(this.model)
+	// 	.pipe(takeUntil(this._destroyed)).subscribe((relations) => {
+	// 		nodes.forEach(node => {
+	// 			const relation = relations.filter(r => r.id === node.id)[0];
+	// 			relation.correlations.filter(c => c.id !== relation.id).forEach((value) => {
+	// 				const relatedNode = nodes.filter(x => x.id === value.id)[0];
+	// 				// const linkIndex = links.findIndex(link => link.id === relatedNode.id + '-' + node.id);
+	// 				// if (linkIndex > -1) {
+	// 				// 	links[linkIndex].value += value.score;
+	// 				// } else {
+	// 					links.push({
+	// 						id: node.id + '-' + relatedNode.id,
+	// 						source: node.id,
+	// 						target: relatedNode.id,
+	// 						value: value.score,
+	// 						lineStyle: {
+	// 							width: 0
+	// 						}
+	// 					});
+	// 				//}
+	// 				// const offset = value.score * 1.5;
+	// 				// const xdelta = Math.abs(relatedNode.x - node.x);
+	// 				// const ydelta = Math.abs(relatedNode.y - node.y);
+	// 				// const xoffset = (relatedNode.x === node.x) ? 0 : (relatedNode.x > node.x) ? Math.min(offset, xdelta) : (Math.min(offset, xdelta)) * -1;
+	// 				// const yoffset = (relatedNode.y === node.y) ? 0 : (relatedNode.y > node.y) ? Math.min(offset, ydelta) : (Math.min(offset, ydelta)) * -1;
+	// 				// node.x = node.x + xoffset;
+	// 				// node.y = node.y + yoffset;
+	// 			});
+	// 		});
+	// 		this.chartOptions = {
+	// 			series: {
+	// 				type: 'graph',
+	// 				layout: 'force',
+	// 				roam: true,
+	// 				autoCurveness: true,
+	// 				nodes: nodes,
+	// 				links: links,
+	// 				nodeScaleRatio: 0, //GK: Why 0.6 is a TYPE???
+	// 				force: {
+	// 					repulsion: [0, 1],
+	// 					edgeLength: [0, 1],
+	// 					layoutAnimation: false
+	// 				}
+	// 			} as any
+	// 		};
+	// 		console.log(JSON.stringify(this.chartOptions));
+	// 	});
+	// } else {
 		this.chartOptions = {
 			series: {
 				type: 'graph',
@@ -167,7 +167,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 			}
 		};
 		console.log(JSON.stringify(this.chartOptions));
-	}
+	//}
 
 
   }
