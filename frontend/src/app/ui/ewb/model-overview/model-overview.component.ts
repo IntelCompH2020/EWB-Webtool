@@ -204,7 +204,8 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 					width: 120,
 					overflow: 'truncate'
 				},
-				type: 'scroll'
+				type: 'scroll',
+				selector: true
 			},
 			tooltip: {
 				trigger: 'axis',
