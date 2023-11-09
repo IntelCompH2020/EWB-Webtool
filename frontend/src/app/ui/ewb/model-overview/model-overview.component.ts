@@ -264,14 +264,15 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 		})
 		Object.entries(result).forEach(val => {
 			seriesData.push({
-				id: `${val[0]}`,
+				id: this.getTopicName(val[0]),
 				value: this.getTopicRelevance(val[0]),
+				rid: val[0],
 				depth: 1,
 				index: seriesData.length
 			});
 			(val[1] as TopDoc[]).forEach(doc => {
 				seriesData.push({
-					id: `${val[0]}.${doc.id}`,
+					id: `${this.getTopicName(val[0])}.${doc.id}`,
 					value: doc.words,
 					depth: 2,
 					index: seriesData.length
@@ -435,8 +436,8 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 					data: {
 						corpus: this.corpus,
 						model: this.model,
-						topicId: event.data.id,
-						topicName: this.getTopicName(event.data.id)
+						topicId: event.data.rid,
+						topicName: event.data.id
 					}
 				});
 			} else if (event.data.depth === 2) {
