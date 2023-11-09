@@ -31,6 +31,7 @@ export class CorpusModelComponent extends BaseComponent implements OnInit {
 
   valueChanged(event: any): void {
 	this.selectedModel = null;
+	this.modelList = [];
     this.ewbService.listModelsByCorpus(event.value)
     .pipe(takeUntil(this._destroyed))
     .subscribe((queryResult: QueryResult<string>) => this.modelList = queryResult.items);

@@ -15,6 +15,7 @@ import { Theta } from '@app/core/model/ewb/theta.model';
 import { TopicMetadata } from '@app/core/model/ewb/topic-metadata.model';
 import { TopDoc } from '@app/core/model/ewb/top-doc.model';
 import { DocumentViewComponent } from '../modules/document-view/document-view.component';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-model-overview',
@@ -31,6 +32,9 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 	chartOptions: EChartsOption = null;
 	useRelation: string = '1';
 	private vocabularies: any;
+	private areLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+	private topicNum = 0;
+	private count = 1;
 
   constructor(private ewbService: EwbService, private dialog: MatDialog) {
 	super();
@@ -38,6 +42,15 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
 	if (this.model !== null && this.model !== undefined) {
+		this.areLoaded.asObservable().subscribe(value => {
+			if (value) {
+				switch(this.selectedView) {
+					case '1':
+						this.makeDefaultViewOptions();
+					break;
+				}
+			}
+		});
 
 		this.ewbService.getVocabularyForTopics(this.model)
 		.pipe(takeUntil(this._destroyed))
@@ -46,20 +59,23 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 			this.ewbService.listTopicsByModel(this.model)
 			.pipe(takeUntil(this._destroyed))
 			.subscribe((queryResult: QueryResult<Topic>) => {
+				this.topicNum = queryResult.items.length;
 				queryResult.items.forEach((topic: Topic) =>
 				this.ewbService.getTopicMetadata(this.model, topic.id)
 					.pipe(takeUntil(this._destroyed))
 					.subscribe((result: TopicMetadata) => {
 						this.topics.push(result);
-						switch(this.selectedView) {
-							case '1':
-								this.makeDefaultViewOptions();
-							break;
+						if (this.topicNum === this.count) {
+							this.areLoaded.next(true);
+						} else {
+							this.count = this.count + 1;
 						}
 					}));
 			});
 		});
 	}
+
+
   }
 
   onOverViewChange(event: MatButtonToggleChange) {
@@ -73,7 +89,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 	let y = 0;
 	let index =0;
 	const nodes = this.topics.map((topic: TopicMetadata) => {
-		const size = 94 * (topic.topic_entropy * 2);
+		const size = 60 * (topic.topic_entropy * 2);
 		const data = {
 			id: topic.id,
 			name: topic.tpc_labels,
@@ -90,7 +106,8 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 			},
 			emphasis: {
 				itemStyle: {
-					color: 'lightblue'
+					color: 'lightblue',
+					overflow: 'break'
 				},
 				label: {
 					formatter: '{b}'
@@ -123,7 +140,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 							id: node.id + '-' + relatedNode.id,
 							source: node.id,
 							target: relatedNode.id,
-							value: 100 - value.score,
+							value: value.score,
 							lineStyle: {
 								width: 0
 							}

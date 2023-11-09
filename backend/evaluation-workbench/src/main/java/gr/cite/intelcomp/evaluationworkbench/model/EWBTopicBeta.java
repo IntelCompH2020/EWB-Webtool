@@ -34,7 +34,7 @@ public class EWBTopicBeta {
             String[] values = topicString.split("\\|");
             EWBTopicBeta topic = new EWBTopicBeta();
             topic.setId(values[0]);
-            topic.setBeta(Integer.parseInt(values[1]));
+            topic.setBeta((int)Double.parseDouble(values[1]));
             result.add(topic);
         }
         return result;
