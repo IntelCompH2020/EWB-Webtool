@@ -29,7 +29,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 	@Input() corpus: string;
 	topics: TopicMetadata[] = [];
 	selectedView: string = '1';
-	chartOptions: EChartsOption = null;
+	chartOptions: any = null;
 	useRelation: string = '1';
 	private vocabularies: any;
 	private areLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -42,37 +42,21 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
 	if (this.model !== null && this.model !== undefined) {
-		this.areLoaded.asObservable().subscribe(value => {
-			if (value) {
-				switch(this.selectedView) {
-					case '1':
-						this.makeDefaultViewOptions();
-					break;
-				}
-			}
-		});
-
 		this.ewbService.getVocabularyForTopics(this.model)
 		.pipe(takeUntil(this._destroyed))
 		.subscribe(result => {
 			this.vocabularies = result;
-			this.ewbService.listTopicsByModel(this.model)
-			.pipe(takeUntil(this._destroyed))
-			.subscribe((queryResult: QueryResult<Topic>) => {
-				this.topicNum = queryResult.items.length;
-				queryResult.items.forEach((topic: Topic) =>
-				this.ewbService.getTopicMetadata(this.model, topic.id)
+			this.ewbService.getAllTopicMetadata(this.model)
 					.pipe(takeUntil(this._destroyed))
-					.subscribe((result: TopicMetadata) => {
-						this.topics.push(result);
-						if (this.topicNum === this.count) {
-							this.areLoaded.next(true);
-						} else {
-							this.count = this.count + 1;
+					.subscribe((result: TopicMetadata[]) => {
+						this.topics = result;
+						switch(this.selectedView) {
+							case '1':
+								this.makeDefaultViewOptions();
+							break;
 						}
-					}));
-			});
-		});
+					});
+				});
 	}
 
 
@@ -110,7 +94,8 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 					overflow: 'break'
 				},
 				label: {
-					formatter: '{b}'
+					formatter: '{b}',
+					overflow: 'break'
 				}
 			}
 		};

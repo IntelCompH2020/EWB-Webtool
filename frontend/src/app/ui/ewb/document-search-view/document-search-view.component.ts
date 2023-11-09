@@ -7,7 +7,6 @@ import { Topic } from '@app/core/model/ewb/topic.model';
 import { EwbService } from '@app/core/services/http/ewb.service';
 import { BaseComponent } from '@common/base/base.component';
 import { QueryResult } from '@common/model/query-result';
-import { EChartsOption } from 'echarts';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -27,7 +26,7 @@ export class DocumentSearchViewComponent extends BaseComponent implements OnInit
 	private page: number = 0;
 	activeId: string | number = 0;
 	maxDocs: number = 0;
-	chartOptions: EChartsOption = null;
+	chartOptions: any = null;
 	private topics: Topic[] = [];
 
 	constructor(
@@ -63,17 +62,29 @@ export class DocumentSearchViewComponent extends BaseComponent implements OnInit
 					tooltip: {
 						trigger: 'item'
 					},
+					legend: {
+						top: '5%',
+						left: 'center'
+					},
 					series: {
 						type: 'pie',
 						radius: ['40%', '70%'],
+						label: {
+							position: 'outside'
+						},
 						select: {
 							disabled: true
 						},
 						data: thetas.map((theta: Theta) => {
 							const data = {
 								id: theta.id,
-								name: `${theta.name} ${(theta.theta / max) * 100}%`,
-								value: theta.theta
+								name: `${theta.name}`,
+								value: (theta.theta / max) * 100,
+								label: {
+									position: 'inner',
+									formatter: `${(theta.theta / max) * 100}%`,
+									overflow: 'trunacate'
+								}
 							}
 							return data;
 						}),

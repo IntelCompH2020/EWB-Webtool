@@ -392,6 +392,16 @@ public class EWBService {
                 })).block();
     }
 
+    public List<EWBTopicMetadata> getAllTopicMetadata(String model) {
+        List<EWBTopicMetadata> metadataList = new ArrayList<>();
+        Integer count = this.queryNrDocsColl(model);
+        EWBTopicModelInfoQuery query = new EWBTopicModelInfoQuery();
+        query.setModelName(model);
+        query.setStart(0);
+        query.setRows(count);
+        return this.getTopicMetadataInternal(query);
+    }
+
     public EWBTopicMetadata getTopicMetadata(String model, String topicId) {
         EWBTopicMetadata result = null;
         Integer count = this.queryNrDocsColl(model);

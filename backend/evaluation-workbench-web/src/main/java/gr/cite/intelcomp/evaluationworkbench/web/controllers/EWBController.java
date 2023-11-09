@@ -128,6 +128,11 @@ public class EWBController {
         return this.service.getTopicMetadata(model, topicId);
     }
 
+    @GetMapping("topics/allmetadata")
+    public List<EWBTopicMetadata> getAllTopicMetadata(@RequestParam String model) {
+        return this.service.getAllTopicMetadata(model);
+    }
+
     @GetMapping("topics/topwords")
     public List<EWBTopicBeta> getTopicTopWords(@RequestParam String model, @RequestParam String topicId) {
         return this.service.getTopicsTopWords(model, topicId);

@@ -110,6 +110,14 @@ export class EwbService {
     })
   }
 
+  getAllTopicMetadata(model: string): Observable<TopicMetadata[]> {
+    return this.http.get<TopicMetadata[]>(`${this.apiBase}/topics/allmetadata`, {
+      params: {
+        model: model
+      }
+    })
+  }
+
   getTopicTopWords(model: string, topicId: string): Observable<TopicBeta[]> {
     return this.http.get<TopicBeta[]>(`${this.apiBase}/topics/topwords`, {
       params: {
