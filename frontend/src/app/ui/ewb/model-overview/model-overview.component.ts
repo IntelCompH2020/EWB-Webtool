@@ -212,7 +212,16 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 			},
 			tooltip: {
 				trigger: 'axis',
-				confine: true
+				confine: true,
+				formatter: (params: any[], unused, unused1) => {
+					console.log(JSON.stringify(params));
+					let finalString = '<ul>';
+					params.forEach(param => {
+						finalString += `<li style=\"color:${param.color}\"><span style=\"color:black\">${param.seriesName}</span><span style=\"width:10px\"></span><span style=\"color: black; float:right\">${param.value}</span></li>`
+					});
+					finalString += '</ul>'
+					return finalString;
+				}
 			},
 			dataZoom: {
 				type: 'inside'
@@ -229,8 +238,17 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
         			axisLabel: {}
 				}
 			],
-			yAxis: {
-			},
+			yAxis:[
+				{
+					type: 'value',
+					axisLabel: {
+						formatter: (value, index) => {
+							console.log(typeof(value));
+							return `${(+value).toFixed(0)}`;
+						}
+					}
+				}
+			],
 			series: this.topics.map((topic, index) => {
 				return {
 					name: topic.tpc_labels,

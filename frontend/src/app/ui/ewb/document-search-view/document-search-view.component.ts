@@ -82,7 +82,7 @@ export class DocumentSearchViewComponent extends BaseComponent implements OnInit
 								value: (theta.theta / max) * 100,
 								label: {
 									position: 'inner',
-									formatter: `${(theta.theta / max) * 100}%`,
+									formatter: `${((theta.theta / max) * 100).toFixed(2)}%`,
 									overflow: 'trunacate'
 								}
 							}

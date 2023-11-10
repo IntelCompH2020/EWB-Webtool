@@ -16,7 +16,7 @@ export class SimilatiryPairQuery {
 			model: [{value: this.model, disabled: false}, Validators.required],
 			lowerLimit: [{value: this.lowerLimit, disabled: false}, Validators.required],
 			upperLimit: [{value: this.upperLimit, disabled: false}, Validators.required],
-			year: [{value: this.year, disabled: false}, Validators.required],
+			year: [{value: this.year, disabled: false}],
 			records: [{value: this.records, disabled: false}, Validators.required]
 		});
 	}

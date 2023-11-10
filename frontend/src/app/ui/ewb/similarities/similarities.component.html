@@ -53,7 +53,7 @@
 					<div class="col-1 col-xl-1 number-title">Result Limit</div>
 					<input type="number" min="1" (change)="sanitizeValue($event)" class="col-1 col-xl-1 number-input-style" formControlName="records">
 					<div class="col-1 col-xl-1 number-title">Centered on year</div>
-					<input type="number" min="1" (change)="sanitizeValue($event)" class="col-1 col-xl-1 number-input-style" formControlName="year">
+					<input type="number" class="col-1 col-xl-1 number-input-style" formControlName="year">
 					<div class="col-3 col-xl-2 d-flex align-items-center">
 						<button class="text-search-button" mat-raised-button color="accent" type="submit"
 							(click)="onSimilarities()">Find Similarities</button>
