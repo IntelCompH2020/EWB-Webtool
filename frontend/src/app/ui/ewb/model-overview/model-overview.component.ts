@@ -71,20 +71,21 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
   private makeDefaultViewOptions() {
 	let x = 0;
 	let y = 0;
-	let index =0;
+	let index = 1;
 	const nodes = this.topics.map((topic: TopicMetadata) => {
-		const size = 60 * (topic.topic_entropy * 2);
+		const size = this.useRelation === '1' ? topic.alphas : 94;
 		const data = {
 			id: topic.id,
 			name: topic.tpc_labels,
 			value: 0,
 			x: this.useRelation === '1' ? topic.coords[0] : x,
 			y: this.useRelation === '1' ? topic.coords[1] : y,
-			symbolSize: topic.alphas * 1000,
+			symbolSize: this.useRelation === '1' ? topic.alphas * 1000 : 94,
 			label: {
 				show: true,
 				formatter: this.getTopWords(topic.id),
-				fontSize: topic.alphas * 100
+				fontSize: this.useRelation === '1' ? topic.alphas * 100 : 12,
+				overflow: 'break'
 			},
 			itemStyle: {
 				color: 'aliceblue'
@@ -100,14 +101,16 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 				}
 			}
 		};
-		if (index === 9) {
-			index = 0;
-			x = 0;
-			y = y + (this.useRelation === '1' ? 0 : size);
-		} else {
-			x = x + (this.useRelation === '1' ? 0 : size);
+		if (this.useRelation !== '1') {
+			if (index === 10) {
+				index = 0;
+				x = 0;
+				y = y + size;
+			} else {
+				x = x + size;
+			}
+			index = index + 1;
 		}
-		index = index + 1;
 		return data;
 	});
 	const links = [];
