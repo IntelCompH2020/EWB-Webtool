@@ -4,7 +4,7 @@ import { CollectionUtils } from '@common/utilities/collection-utils.service';
 import { BaseComponent } from '@common/base/base.component';
 import { ListingSettingsDialogComponent } from '@common/modules/listing/listing-settings/listing-settings-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
-import { TableColumn } from '@swimlane/ngx-datatable';
+import { SelectionType, TableColumn } from '@swimlane/ngx-datatable';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -22,7 +22,7 @@ export class ListingComponent extends BaseComponent implements OnInit, OnChanges
 
 
 	@Input()
-	selectionType;
+	selectionType: SelectionType;
 
 	@Input() class: TableClass = TableClass.Material;
 	@Input() columns: ColumnDefinition[];

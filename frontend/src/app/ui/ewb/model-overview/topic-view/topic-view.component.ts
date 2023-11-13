@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PercentValuePipe } from '@app/core/formatting/pipes/percentage.pipe';
 import { TopDoc } from '@app/core/model/ewb/top-doc.model';
 import { TopicBeta, TopicMetadata } from '@app/core/model/ewb/topic-metadata.model';
@@ -9,6 +9,9 @@ import { BaseComponent } from '@common/base/base.component';
 import { ColumnDefinition } from '@common/modules/listing/listing.component';
 import { takeUntil } from 'rxjs/operators';
 import { nameof } from 'ts-simple-nameof';
+import { DocumentViewComponent } from '../../modules/document-view/document-view.component';
+import { Dialog } from '@angular/cdk/dialog';
+import { SelectionType } from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-topic-view',
@@ -29,9 +32,12 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 	words: TopicBeta[] = [];
 	topWordColumns: ColumnDefinition[] = [];
 
+	public selectionType = SelectionType;
+
   constructor(
 	private dialogRef: MatDialogRef<TopicViewComponent>,
 	private ewbService: EwbService,
+	private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) private data: {
 		corpus: string,
 		model: string,
@@ -160,6 +166,19 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 
   emptyValue(value: number): number {
 	return 100 - value;
+  }
+
+  showDocument(event: any) {
+	this.ewbService.getDocument(this.data.corpus, event[0].id).subscribe((doc: any) => {
+		this.dialog.open(DocumentViewComponent, {
+			width: '85vw',
+			height: '80vh',
+			panelClass: 'topic-style',
+			data: {
+				selectedDoc: doc
+			}
+		});
+	});
   }
 
 }

@@ -46,7 +46,7 @@
 			</div>
 			<div *ngIf="documents.length > 0" class="row">
 				<div class="element-div w-100">
-					<app-listing [rows]="documents" [columns]="topDocColumns" [count]="documents.length" hideFooter></app-listing>
+					<app-listing [rows]="documents" [columns]="topDocColumns" [count]="documents.length" [selectionType]="selectionType.single" (rowSelected)="showDocument($event)" hideFooter></app-listing>
 				</div>
 			</div>
 		</div>

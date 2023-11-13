@@ -32,3 +32,7 @@
 ::ng-deep .pretty-header {
 	background-color: #fff;
 }
+
+.topic-style .mat-dialog-container .mat-dialog-content {
+	overflow-x: hidden;
+}
