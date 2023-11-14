@@ -69,7 +69,6 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 	.subscribe(result => {
 		this.documents = result;
 		this.maxValue = this.documents.reduce((prev, curr) => (prev.topic > curr.topic)? prev : curr).topic;
-		console.log(JSON.stringify(result));
 		this.setupTopDocColumns();
 	});
 
@@ -78,7 +77,6 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 	.subscribe(result => {
 		this.words = result;
 		this.maxValue = this.words.reduce((prev, curr) => (prev.beta > curr.beta)? prev : curr).beta;
-		console.log(JSON.stringify(result));
 		this.setupTopWordColumns();
 	});
   }
@@ -101,14 +99,14 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 		{
 			prop: nameof<TopDoc>(x => x.words),
 			name: nameof<TopDoc>(x => x.words),
-			sortable: false,
+			sortable: true,
 			resizeable: false,
 			alwaysShown: true,
 			isTreeColumn: false,
 			canAutoResize: true,
 			maxWidth: 250,
 			minWidth: 200,
-			languageName: '%',
+			languageName: 'APP.EWB-COMPONENT.MODEL-OVERVIEW-COMPONENT.TOPIC-VIEWER.LISTING.RELEVANCE',
 			headerClass: 'pretty-header',
 			cellTemplate: this.percentageBar,
 			pipe: pipe
@@ -179,6 +177,25 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 			}
 		});
 	});
+  }
+
+  sortRows(ev: any) {
+	const column = ev.sortDescriptors[0].property;
+	if (column === nameof<TopDoc>(x => x.words)) {
+		this.ewbService.getNumOfDocs(this.data.corpus).subscribe(num => {
+			const topDocTopicQuery: TopDocTopicQuery = {
+				corpusCollection: this.data.corpus,
+				modelName: this.data.model,
+				topicId: +this.data.topicId.charAt(1),
+				start: ev.newValue === 'asc' ? num - 10 : 0,
+				rows: 10
+			};
+			this.ewbService.getTopDocs(topDocTopicQuery).subscribe(result => {
+				this.documents = result;
+			});
+		});
+	}
+
   }
 
 }

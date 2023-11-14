@@ -156,4 +156,12 @@ export class EwbService {
     return this.http.post<QueryResult<Classification>>(`${this.apiBase}/classify`, query);
   }
 
+  getNumOfDocs(collection: string): Observable<number> {
+	return this.http.get<number>(`${this.apiBase}/getNrDocColl`, {
+		params: {
+			collection: collection
+		}
+	});
+  }
+
 }

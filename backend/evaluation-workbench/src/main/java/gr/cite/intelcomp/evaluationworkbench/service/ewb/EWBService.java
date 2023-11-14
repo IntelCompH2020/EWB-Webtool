@@ -341,7 +341,7 @@ public class EWBService {
     public List<EWBTopDoc> getTopicTopDocs(TopicTopDocQuery query) {
         List<EWBTopDoc> results = Objects.requireNonNull(ewbTMClient.get().uri("/queries/getTopicTopDocs/", builder -> WebClientUtils.buildParameters(builder, query))
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBTopDocResponse>>() {
-                })).block()).stream().map(doc -> new EWBTopDoc(doc.getId(), doc.getThetas().get(0).getTheta(), doc.getWords())).collect(Collectors.toList());
+                })).block()).stream().map(doc -> new EWBTopDoc(doc.getId(), doc.getThetas() != null ? doc.getThetas().get(0).getTheta() : 0, doc.getWords())).collect(Collectors.toList());
         CollectionQuery collectionQuery = new CollectionQuery();
         collectionQuery.setCollection(query.getCorpusCollection());
         collectionQuery.setQ("id: (" + results.stream().map(EWBTopDoc::getId).collect(Collectors.joining(" ")) + ")");
