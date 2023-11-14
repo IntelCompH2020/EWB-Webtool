@@ -13,7 +13,7 @@ import { catchError } from 'rxjs/operators';
 @Injectable()
 export class UserService {
 
-	private get apiBase(): string { return `${this.installationConfiguration.appServiceAddress}api/user/user`; }
+	private get apiBase(): string { return `${this.installationConfiguration.userServiceAddress}api/user`; }
 
 	constructor(
 		private installationConfiguration: InstallationConfigurationService,

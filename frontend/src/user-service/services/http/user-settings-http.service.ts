@@ -11,7 +11,7 @@ export class UserSettingsHttpService {
 		private installationConfiguration: InstallationConfigurationService,
 		private http: BaseHttpService) { }
 
-	private get apiBase(): string { return `${this.installationConfiguration.appServiceAddress}api/user/user-settings`; }
+	private get apiBase(): string { return `${this.installationConfiguration.userServiceAddress}api/user/user-settings`; }
 
 	getSingle(key: string): Observable<UserSettings> {
 		const url = `${this.apiBase}/${key}`;

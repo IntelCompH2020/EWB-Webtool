@@ -27,6 +27,7 @@ export abstract class BaseInterceptor implements HttpInterceptor {
 		return (req.params instanceof BaseHttpParams && req.params.interceptorContext && Array.isArray(req.params.interceptorContext.interceptAllRequests) && req.params.interceptorContext.interceptAllRequests.includes(this.type))
 			|| req.url.startsWith(this.installationConfiguration.idpServiceAddress)
 			|| req.url.startsWith(this.installationConfiguration.notificationServiceAddress)
-			|| req.url.startsWith(this.installationConfiguration.appServiceAddress);
+			|| req.url.startsWith(this.installationConfiguration.appServiceAddress)
+			|| req.url.startsWith(this.installationConfiguration.userServiceAddress);
 	}
 }

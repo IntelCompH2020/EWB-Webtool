@@ -1,0 +1,135 @@
+permissions:
+  extendedClaims: [ ]
+  policies:
+
+    # Tenants
+    BrowseTenant:
+      roles:
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    EditTenant:
+      roles:
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    DeleteTenant:
+      roles:
+        - ic-sti-superuser
+      claims: [ ]
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    AllowNoTenant:
+      roles:
+        - ic-sti-superuser
+      claims: [ ]
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+
+
+    # Users
+    BrowseUser:
+      roles:
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: true
+      allowAuthenticated: false
+    EditUser:
+      roles:
+        - admin
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    DeleteUser:
+      roles:
+        - ic-sti-superuser
+      claims: [ ]
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    
+    
+    # UserContactInfo
+    BrowseUserContactInfo:
+      roles:
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: true
+      allowAuthenticated: false
+    EditUserContactInfo:
+      roles:
+        - ic-sti-superuser
+        - user
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    DeleteUserContactInfo:
+      roles:
+        - ic-sti-superuser
+      claims: [ ]
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+
+
+    # ViewPage Permissions
+    ViewTenantPage:
+      roles:
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    ViewUsersPage:
+      roles:
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    ViewApiClientsPage:
+      roles:
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    ViewRoleAssignmentPage:
+      roles:
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    ViewAccessTokensPage:
+      roles:
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    ViewUserProfilePage:
+      roles:
+        - ic-sti-superuser
+        - tenantadmin
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    ViewForgetMeRequestPage:
+      roles:
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    ViewWhatYouKnowAboutMeRequestPage:
+      roles:
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false
+    ViewTenantConfigurationPage:
+      roles:
+        - ic-sti-superuser
+      clients: [ ]
+      allowAnonymous: false
+      allowAuthenticated: false

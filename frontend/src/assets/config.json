@@ -24,6 +24,10 @@
 		"enabled": true,
 		"address": "http://localhost:8085/"
 	},
+	"user_service": {
+		"enabled": true,
+		"address": "http://localhost:8089/"
+	},
 	"logging": {
 		"enabled": true,
 		"logLevels": ["debug", "info", "warning", "error"]

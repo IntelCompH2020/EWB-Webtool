@@ -77,7 +77,7 @@ export class AuthService extends BaseService {
 			// Logout if we receive event that logout action occurred in a different tab.
 			if (event.key && event.key === 'authState' && event.newValue === 'false' && this._authState) {
 				this.clear();
-				//this.router.navigate(['/unauthorized'], { queryParams: { returnUrl: this.router.url } });
+				this.router.navigate(['/unauthorized'], { queryParams: { returnUrl: this.router.url } });
 				window.location.href = installationConfiguration.authLogoutUri;
 			}
 		});
@@ -242,7 +242,7 @@ export class AuthService extends BaseService {
 				if(!isRefreshed){
 					return false;
 				}
-				
+
 				return this.prepareAuthRequest(from(this.keycloakService.getToken()), httpParams).pipe(takeUntil(this._destroyed))
 				.pipe(
 					map(

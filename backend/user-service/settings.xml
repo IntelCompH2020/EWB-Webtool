@@ -1,0 +1,12 @@
+<settings>
+	<pluginGroups>
+		<pluginGroup>org.sonarsource.scanner.maven</pluginGroup>
+	</pluginGroups>
+	<servers>
+		<server>
+			<id>cite-maven</id>
+			<username>${server.username}</username>
+			<password>${server.password}</password>
+		</server>
+	</servers>
+</settings>

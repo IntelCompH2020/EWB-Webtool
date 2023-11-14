@@ -56,6 +56,11 @@ export class InstallationConfigurationService extends BaseComponent {
 		return this._appServiceAddress || './';
 	}
 
+	private _userServiceAddress: string;
+	get userServiceAddress(): string {
+		return this._userServiceAddress || './';
+	}
+
 	private _authClientId: string;
 	get authClientId(): string {
 		return this._authClientId;
@@ -104,6 +109,11 @@ export class InstallationConfigurationService extends BaseComponent {
 	private _appServiceEnabled: boolean;
 	get appServiceEnabled(): boolean {
 		return this._appServiceEnabled;
+	}
+
+	private _userServiceEnabled: boolean;
+	get userServiceEnabled(): boolean {
+		return this._userServiceEnabled;
 	}
 
 	private _logging: boolean;
@@ -171,6 +181,10 @@ export class InstallationConfigurationService extends BaseComponent {
 			this._appServiceEnabled = config.app_service.enabled;
 			this._appServiceAddress = config.app_service.address;
 		}
+		if (config.user_service) {
+			this._userServiceEnabled = config.user_service.enabled;
+			this._userServiceAddress = config.user_service.address;
+		}
 		if (config.notification_service) {
 			this._notificationServiceEnabled = config.notification_service.enabled;
 			this._notificationServiceAddress = config.notification_service.address;
@@ -187,9 +201,9 @@ export class InstallationConfigurationService extends BaseComponent {
 			this._authFlow = config.idp_service.flow;
 			this._authRedirectUri = config.idp_service.redirectUri;
 			this._authLogoutUri = this._idpServiceAddress +
-				 '/realms/' + 
-				 this._authRealm + 
-				 '/protocol/openid-connect/logout?redirect_uri=' + 
+				 '/realms/' +
+				 this._authRealm +
+				 '/protocol/openid-connect/logout?redirect_uri=' +
 				 encodeURIComponent(this._authRedirectUri)
 		}
 
