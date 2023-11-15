@@ -215,9 +215,9 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 				confine: true,
 				formatter: (params: any[], unused, unused1) => {
 					console.log(JSON.stringify(params));
-					let finalString = '<ul>';
+					let finalString = '<ul style=\"padding-left:20px\">';
 					params.forEach(param => {
-						finalString += `<li style=\"color:${param.color}\"><span style=\"color:black\">${param.seriesName}</span><span style=\"width:10px\"></span><span style=\"color: black; float:right\">${param.value}</span></li>`
+						finalString += `<li style=\"color:${param.color}\"><span style=\"color:black; float:left; padding-right:20px;\">${param.seriesName}</span><span style=\"color: black; float:right\">${param.value}</span></li>`
 					});
 					finalString += '</ul>'
 					return finalString;
