@@ -16,6 +16,7 @@ import { TopicMetadata } from '@app/core/model/ewb/topic-metadata.model';
 import { TopDoc } from '@app/core/model/ewb/top-doc.model';
 import { DocumentViewComponent } from '../modules/document-view/document-view.component';
 import { BehaviorSubject } from 'rxjs';
+import { TopicBeta } from '@app/core/model/ewb/topic-beta.model';
 
 @Component({
   selector: 'app-model-overview',
@@ -163,18 +164,74 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 	// 		console.log(JSON.stringify(this.chartOptions));
 	// 	});
 	// } else {
-		this.chartOptions = {
-			series: {
-				type: 'graph',
-				layout: 'none',
-				zoom: 1,
-				nodes: nodes
-			}
-		};
+		if (this.useRelation === '1') {
+			// this.chartOptions = {
+			// 	series: {
+			// 		type: 'graph',
+			// 		layout: 'none',
+			// 		nodes: nodes,
+			// 		roam: true,
+			// 		dataZoom: {
+			// 			type: 'absolute'
+			// 		},
+			// 		autoCurveness: true,
+			// 		nodeScaleRatio: 0.6, //GK: Why 0.6 is a TYPE???
+			// 		symbolKeepAspect: true,
+			// 		force: {
+			// 			repulsion: [0, 1],
+			// 			edgeLength: [0, 1],
+			// 			layoutAnimation: false
+			// 		}
+			// 	}
+			// };
+			this.makeTreemapOptions();
+		} else {
+			this.chartOptions = {
+				series: {
+					type: 'graph',
+					layout: 'none',
+					nodes: nodes
+				}
+			};
+		}
+
 		console.log(JSON.stringify(this.chartOptions));
 	//}
 
 
+  }
+
+  private makeTreemapOptions() {
+	const data = [];
+	this.topics.forEach(topic => {
+		data.push({
+			value: topic.alphas,
+			name: topic.tpc_labels,
+			path: topic.tpc_labels,
+			id: topic.id,
+			children: this.getTopicChildren(topic.id, topic.tpc_labels)
+		});
+	});
+	this.chartOptions = {
+		series: {
+			type: 'treemap',
+			layout: 'none',
+			visibleMin: 300,
+			upperLabel: {
+				show: true
+			},
+			data: data,
+			levels: [
+				{},
+				{
+					itemStyle: {
+						borderColor: '#555',
+						borderWidth: 15
+					}
+				}
+			]
+		}
+	};
   }
 
   private makeTemporalViewOptions() {
@@ -497,7 +554,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 
   private getTopWords(topicId: string): string {
 	if (this.vocabularies !== undefined && this.vocabularies !== null) {
-		const words: any[] = this.vocabularies[topicId];
+		const words: any[] = (this.vocabularies[topicId] as TopicBeta[]).map(beta => beta.id);
 		let finalString: string = '';
 		for (let i = 0; i < 5; i++) {
 			finalString = `${finalString}\n${words[i]}`;
@@ -513,6 +570,18 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 
   private getTopicRelevance(topicId: string): number {
 	return this.topics.filter((topic: TopicMetadata) => topic.id === topicId)[0].topic_entropy;
+  }
+
+  private getTopicChildren(topicId: string, topicName: string): any[] {
+	const children: any[] = [];
+	(this.vocabularies[topicId] as TopicBeta[]).forEach(beta => {
+		children.push({
+			value: beta.beta,
+			name: beta.id,
+			path: `${topicName}/${beta.id}`
+		});
+	});
+	return children;
   }
 
 }

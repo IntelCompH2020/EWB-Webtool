@@ -103,7 +103,7 @@ public class EWBController {
     }
 
     @GetMapping("topics/vocabulary")
-    public Map<String, List<String>> getTopicVocabulary(@RequestParam String model) {
+    public Map<String, List<EWBTopicBeta>> getTopicVocabulary(@RequestParam String model) {
         return this.service.getTopicsVocabularies(model);
     }
 

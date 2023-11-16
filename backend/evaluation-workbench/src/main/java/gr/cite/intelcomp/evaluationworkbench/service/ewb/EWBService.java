@@ -353,8 +353,8 @@ public class EWBService {
         return results;
     }
 
-    public Map<String, List<String>> getTopicsVocabularies(String model) {
-        Map<String, List<String>> result = new HashMap<>();
+    public Map<String, List<EWBTopicBeta>> getTopicsVocabularies(String model) {
+        Map<String, List<EWBTopicBeta>> result = new HashMap<>();
         Integer count = this.queryNrDocsColl(model);
         int index = 0;
         final int maxRows = 10;
@@ -363,7 +363,7 @@ public class EWBService {
         query.setRows(maxRows);
         while (index < count) {
             query.setStart(index);
-            result.putAll(this.getTopicMetadataInternal(query).stream().map(topicMetadata -> Map.entry(topicMetadata.getId(), topicMetadata.getVocab().stream().map(EWBTopicBeta::getId).collect(Collectors.toList()))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+            result.putAll(this.getTopicMetadataInternal(query).stream().map(topicMetadata -> Map.entry(topicMetadata.getId(), topicMetadata.getVocab())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
             index += maxRows;
         }
         return result;
