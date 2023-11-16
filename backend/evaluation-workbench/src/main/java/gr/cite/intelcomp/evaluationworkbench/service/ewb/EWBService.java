@@ -295,6 +295,8 @@ public class EWBService {
             for (int i = finalMinYear; i < finalMaxYear + 1; i++) {
                 if (!value.containsKey(i)) {
                     value.put(i, 0.0);
+                } else {
+                    value.put(i, value.get(i) / 1000.0d);
                 }/* else {
                     value.put(i, Double.parseDouble(decimalFormat.format(value.get(i) / finalDivider)));
                 }*/
