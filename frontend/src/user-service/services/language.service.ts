@@ -51,24 +51,24 @@ export class LanguageService extends BaseService {
 	languageSelected(language: LanguageType, updateUserProfile = true) {
 		if (this.currentLanguage === language) { return; }
 
-		const userId = this.authService.userId();
-		if (updateUserProfile && userId) {
-			const userLanguage: UserProfileLanguagePatch = {
-				id: userId,
-				language: this.languageValues.get(language)
-			};
+		// const userId = this.authService.userId();
+		// if (updateUserProfile && userId) {
+		// 	const userLanguage: UserProfileLanguagePatch = {
+		// 		id: userId,
+		// 		language: this.languageValues.get(language)
+		// 	};
 
-			this.userService.updateUserLanguage(userLanguage).pipe(takeUntil(this._destroyed)).subscribe(
-				complete => {
-					this.currentLanguage = language;
-					this.languageChangeSubject.next(language);
-				},
-				error => this.onCallbackError(error)
-			);
-		} else {
+		// 	this.userService.updateUserLanguage(userLanguage).pipe(takeUntil(this._destroyed)).subscribe(
+		// 		complete => {
+		// 			this.currentLanguage = language;
+		// 			this.languageChangeSubject.next(language);
+		// 		},
+		// 		error => this.onCallbackError(error)
+		// 	);
+		// } else {
 			this.currentLanguage = language;
 			this.languageChangeSubject.next(language);
-		}
+		//}
 
 	}
 
