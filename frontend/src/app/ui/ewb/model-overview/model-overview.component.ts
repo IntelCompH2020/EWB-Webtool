@@ -578,6 +578,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 		children.push({
 			value: beta.beta,
 			name: beta.id,
+			id: topicId,
 			path: `${topicName}/${beta.id}`
 		});
 	});
