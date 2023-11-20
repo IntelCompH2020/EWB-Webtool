@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -15,6 +17,7 @@ import reactor.core.publisher.Mono;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
@@ -23,6 +26,8 @@ public class EWBService {
     private final WebClient ewbTMClient;
 
     private final WebClient ewbClassificationClient;
+    //TODO: Remove it when the actual thing is ready
+    private final ConcurrentHashMap<String, List<String>> relevances = new ConcurrentHashMap<>();
 
     @Autowired
     public EWBService(@Qualifier("ewbTMClient") WebClient ewbTMClient, @Qualifier("ewbClassificationClient") WebClient ewbClassificationClient) {
@@ -497,5 +502,38 @@ public class EWBService {
                 }))
                 .block(), "Classification service response is null");
         return ClassificationModel.getResponseModel((LinkedHashMap<String, List<Object>>) response);
+    }
+
+    public EWBTopicMetadata addTopic(RelevantTopicModel relevantTopicModel) {
+        Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String key = principal.getClaimAsString("sub") + "-" + relevantTopicModel.getModel();
+        if (!this.relevances.containsKey(key)) {
+            this.relevances.put(key, new ArrayList<>());
+        }
+        this.relevances.get(key).add(relevantTopicModel.getTopicId());
+        return this.getTopicMetadata(relevantTopicModel.getModel(), relevantTopicModel.getTopicId());
+    }
+
+    public void removeTopic(RelevantTopicModel relevantTopicModel) {
+        Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String key = principal.getClaimAsString("sub") + "-" + relevantTopicModel.getModel();
+        if (this.relevances.containsKey(key)) {
+            this.relevances.put(key, this.relevances.get(key).stream().filter(s -> !s.equals(relevantTopicModel.getTopicId())).toList());
+        }
+    }
+
+    public List<EWBTopicMetadata> getUserTopics(String model) {
+        Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String key = principal.getClaimAsString("sub") + "-" + model;
+        if (this.relevances.containsKey(key)) {
+            return this.getAllTopicMetadata(model).stream().filter(ewbTopicMetadata -> this.relevances.get(key).contains(ewbTopicMetadata.getId())).toList();
+        }
+        return Collections.EMPTY_LIST;
+    }
+
+    public Boolean isTopicRelevant(RelevantTopicModel relevantTopicModel) {
+        Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String key = principal.getClaimAsString("sub") + "-" + relevantTopicModel.getModel();
+        return this.relevances.containsKey(key) && this.relevances.get(key).stream().anyMatch(s -> s.equals(relevantTopicModel.getTopicId()));
     }
 }

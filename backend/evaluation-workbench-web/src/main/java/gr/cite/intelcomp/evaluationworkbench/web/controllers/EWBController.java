@@ -156,4 +156,24 @@ public class EWBController {
         return new QueryResult<>(responseList, responseList.size());
     }
 
+    @PostMapping("topics/addRelative")
+    public EWBTopicMetadata addTopic(@RequestBody RelevantTopicModel model) {
+        return this.service.addTopic(model);
+    }
+
+    @PostMapping("topics/removeRelative")
+    public void removeTopic(@RequestBody RelevantTopicModel model) {
+        this.service.removeTopic(model);
+    }
+
+    @GetMapping("topics/relative")
+    public List<EWBTopicMetadata> listUsersTopics(@RequestParam String model) {
+        return this.service.getUserTopics(model);
+    }
+
+    @PostMapping("topics/isRelevant")
+    public Boolean isTopicRelevant(@RequestBody RelevantTopicModel model) {
+        return this.service.isTopicRelevant(model);
+    }
+
 }

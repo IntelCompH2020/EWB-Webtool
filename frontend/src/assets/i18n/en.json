@@ -941,6 +941,11 @@
 			"MODEL-OVERVIEW": "Model Overview",
 			"DOCUMENT-SEARCH": "Document Search",
 			"SIMILARITIES": "Similarities",
+			"TOPIC-RELEVANCE": {
+				"ALL-TOPICS": "All Topics",
+				"RELEVANT-TOPICS": "Relevant Topics",
+				"TOPICS": "Topics"
+			},
 			"MODEL-OVERVIEW-COMPONENT": {
 				"DEFAULT": "Default View",
 				"HIERARCHICAL": "Hierarchical View",

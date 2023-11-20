@@ -15,6 +15,7 @@ import { DocumentViewComponent } from './modules/document-view/document-view.com
 import { DocumentSearchComponent } from './modules/document-search/document-search.component';
 import { DocumentSearchViewComponent } from './document-search-view/document-search-view.component';
 import { CorpusModelModule } from '@common/modules/corpus-model/corpus-model.module';
+import { TopicRelevanceComponent } from './model-overview/topic-relevance/topic-relevance.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { CorpusModelModule } from '@common/modules/corpus-model/corpus-model.mod
     DocumentSearchComponent,
     DocumentSearchViewComponent,
     SimilaritiesComponent,
-    DocumentViewComponent
+    DocumentViewComponent,
+    TopicRelevanceComponent
   ],
   imports: [
     CommonUiModule,

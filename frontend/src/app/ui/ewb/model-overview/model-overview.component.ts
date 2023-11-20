@@ -17,6 +17,8 @@ import { TopDoc } from '@app/core/model/ewb/top-doc.model';
 import { DocumentViewComponent } from '../modules/document-view/document-view.component';
 import { BehaviorSubject } from 'rxjs';
 import { TopicBeta } from '@app/core/model/ewb/topic-beta.model';
+import { TopicRelevanceService } from '@app/core/services/ui/topic-relevance.service';
+import { TopicRelevanceModel } from '@app/core/model/ewb/topic-relevance.model';
 
 @Component({
   selector: 'app-model-overview',
@@ -37,7 +39,10 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 	private topicNum = 0;
 	private count = 1;
 
-  constructor(private ewbService: EwbService, private dialog: MatDialog) {
+	private relevantTopics: TopicMetadata[] = [];
+	private topicRelevanceSubscription: any;
+
+  constructor(private ewbService: EwbService, private dialog: MatDialog, private topicRelevanceService: TopicRelevanceService) {
 	super();
    }
 
@@ -47,20 +52,48 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 		.pipe(takeUntil(this._destroyed))
 		.subscribe(result => {
 			this.vocabularies = result;
-			this.ewbService.getAllTopicMetadata(this.model)
-					.pipe(takeUntil(this._destroyed))
-					.subscribe((result: TopicMetadata[]) => {
-						this.topics = result;
-						switch(this.selectedView) {
-							case '1':
-								this.makeDefaultViewOptions();
-							break;
-						}
-					});
-				});
+			this.registerTopicRelevanceListeners();
+		});
 	}
 
 
+  }
+
+  private registerTopicRelevanceListeners() {
+	this.topicRelevanceSubscription = this.topicRelevanceService.getTopics()
+	.pipe(takeUntil(this._destroyed))
+	.subscribe((result: TopicRelevanceModel) => {
+		this.relevantTopics = result.topics;
+		if (result.useRelevance) {
+			this.topics = this.relevantTopics;
+			this.setChartOptions();
+		} else {
+			this.getAllTopics();
+		}
+	});
+  }
+
+  private getAllTopics() {
+	this.ewbService.getAllTopicMetadata(this.model)
+					.pipe(takeUntil(this._destroyed))
+					.subscribe((result: TopicMetadata[]) => {
+						this.topics = result;
+						this.setChartOptions();
+					});
+  }
+
+  private setChartOptions() {
+	switch(this.selectedView) {
+		case '1':
+			this.makeDefaultViewOptions();
+			break;
+		case '2':
+			this.makeTemporalViewOptions();
+			break;
+		case '3':
+			this.makeHierarchicalViewOptions();
+			break;
+	}
   }
 
   onOverViewChange(event: MatButtonToggleChange) {
@@ -539,17 +572,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 
   onRadioChange(event: MatRadioChange) {
 	this.selectedView = event.value;
-	switch(this.selectedView) {
-		case '1':
-			this.makeDefaultViewOptions();
-			break;
-		case '2':
-			this.makeTemporalViewOptions();
-			break;
-		case '3':
-			this.makeHierarchicalViewOptions();
-			break;
-	}
+	this.setChartOptions();
   }
 
   private getTopWords(topicId: string): string {

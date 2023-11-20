@@ -164,4 +164,22 @@ export class EwbService {
 	});
   }
 
+  addRelevantTopic(model: string, topicId: string): Observable<TopicMetadata> {
+	return this.http.post<TopicMetadata>(`${this.apiBase}/topics/addRelative`, {model: model, topicId: topicId});
+  }
+
+  removeRelevantTopic(model: string, topicId: string): Observable<void> {
+	return this.http.post<void>(`${this.apiBase}/topics/removeRelative`, {model: model, topicId: topicId});
+  }
+
+  getAllRelativeTopics(model: string): Observable<TopicMetadata[]> {
+	return this.http.get<TopicMetadata[]>(`${this.apiBase}/topics/relative`, {params: {
+		model: model
+	}});
+  }
+
+  isTopicRelative(model: string, topicId: string): Observable<boolean> {
+	return this.http.post<boolean>(`${this.apiBase}/topics/isRelevant`, {model: model, topicId: topicId});
+  }
+
 }

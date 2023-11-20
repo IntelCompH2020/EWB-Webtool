@@ -31,6 +31,7 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 	topicName: string = '';
 	words: TopicBeta[] = [];
 	topWordColumns: ColumnDefinition[] = [];
+	isRelevant: boolean = false;
 
 	public selectionType = SelectionType;
 
@@ -79,6 +80,10 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 		this.maxValue = this.words.reduce((prev, curr) => (prev.beta > curr.beta)? prev : curr).beta;
 		this.setupTopWordColumns();
 	});
+
+	this.ewbService.isTopicRelative(this.data.model, this.data.topicId)
+	.pipe(takeUntil(this._destroyed))
+	.subscribe(result => this.isRelevant = result);
   }
 
   private setupTopDocColumns() {
@@ -195,6 +200,19 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 			});
 		});
 	}
+
+  }
+
+  addRelevant() {
+	this.ewbService.addRelevantTopic(this.data.model, this.data.topicId)
+	.pipe(takeUntil(this._destroyed))
+	.subscribe(result => this.isRelevant = true);
+  }
+
+  removeRelevant() {
+	this.ewbService.removeRelevantTopic(this.data.model, this.data.topicId)
+	.pipe(takeUntil(this._destroyed))
+	.subscribe(() => this.isRelevant = false);
 
   }
 

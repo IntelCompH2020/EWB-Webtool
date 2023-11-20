@@ -1,8 +1,18 @@
 <div class="container-div">
 
-	<h4 class="fixed-top-navbar">
+	<div class="row">
+	<h4 class="col-auto fixed-top-navbar">
 		<span>{{ topicName }}</span>
 	</h4>
+	<div class="col-auto">
+		<button mat-button matTooltip="Add Topic to Relevants" *ngIf="!isRelevant" (click)="addRelevant()">
+			<mat-icon>add</mat-icon>
+		</button>
+		<button mat-button matTooltip="Remove Topic from Relevants" *ngIf="isRelevant" (click)="removeRelevant()">
+			<mat-icon>remove</mat-icon>
+		</button>
+	</div>
+	</div>
 
 	<div class="row" *ngIf="topicMetadata">
 		<div class="col-12 col-xl-5">

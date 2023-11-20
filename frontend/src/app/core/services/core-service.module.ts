@@ -15,6 +15,7 @@ import { FilterService } from '@common/modules/text-filter/filter-service';
 import { CollectionUtils } from '@common/utilities/collection-utils.service';
 import { TypeUtils } from '@common/utilities/type-utils.service'
 import { SnackBarCommonNotificationsService } from './ui/snackbar-notifications.service';
+import { TopicRelevanceService } from './ui/topic-relevance.service';
 
 //
 //
@@ -49,7 +50,8 @@ export class CoreAppServiceModule {
 				TypeUtils,
 				AppPrincipalService,
 				QueryParamsService,
-				SnackBarCommonNotificationsService
+				SnackBarCommonNotificationsService,
+				TopicRelevanceService
 			],
 		};
 	}
