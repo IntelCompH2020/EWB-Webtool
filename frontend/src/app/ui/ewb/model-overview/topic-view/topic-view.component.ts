@@ -32,6 +32,7 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 	words: TopicBeta[] = [];
 	topWordColumns: ColumnDefinition[] = [];
 	isRelevant: boolean = false;
+	topDocuments: TopDoc[] = [];
 
 	public selectionType = SelectionType;
 
@@ -62,14 +63,16 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 		modelName: this.data.model,
 		topicId: +this.data.topicId.charAt(1),
 		start: 0,
-		rows: 10
+		rows: undefined
 	};
 
 	this.ewbService.getTopDocs(topDocTopicQuery)
 	.pipe(takeUntil(this._destroyed))
 	.subscribe(result => {
 		this.documents = result;
-		this.maxValue = this.documents.reduce((prev, curr) => (prev.topic > curr.topic)? prev : curr).topic;
+		this.documents.forEach(doc => doc.token = doc.words);
+		this.maxValue = this.documents.reduce((prev, curr) => (prev.topic > curr.topic)? prev : curr).relevance;
+		this.topDocuments = this.documents.slice(0, 10);
 		this.setupTopDocColumns();
 	});
 
@@ -102,8 +105,8 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 			headerClass: 'pretty-header'
 		},
 		{
-			prop: nameof<TopDoc>(x => x.words),
-			name: nameof<TopDoc>(x => x.words),
+			prop: nameof<TopDoc>(x => x.relevance),
+			name: nameof<TopDoc>(x => x.relevance),
 			sortable: true,
 			resizeable: false,
 			alwaysShown: true,
@@ -117,9 +120,9 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 			pipe: pipe
 		},
 		{
-			prop: nameof<TopDoc>(x => x.topic),
-			name: nameof<TopDoc>(x => x.topic),
-			sortable: false,
+			prop: nameof<TopDoc>(x => x.token),
+			name: nameof<TopDoc>(x => x.token),
+			sortable: true,
 			resizeable: false,
 			alwaysShown: true,
 			isTreeColumn: false,
@@ -184,23 +187,22 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 	});
   }
 
-  sortRows(ev: any) {
-	const column = ev.sortDescriptors[0].property;
-	if (column === nameof<TopDoc>(x => x.words)) {
-		this.ewbService.getNumOfDocs(this.data.corpus).subscribe(num => {
-			const topDocTopicQuery: TopDocTopicQuery = {
-				corpusCollection: this.data.corpus,
-				modelName: this.data.model,
-				topicId: +this.data.topicId.charAt(1),
-				start: ev.newValue === 'asc' ? num - 10 : 0,
-				rows: 10
-			};
-			this.ewbService.getTopDocs(topDocTopicQuery).subscribe(result => {
-				this.documents = result;
-			});
-		});
+  selectWord(event: any) {
+  	let selectedWord: string = null;
+	if (event.length > 0) {
+		selectedWord = event[0].id;
+		this.documents.forEach(doc => doc.token = doc.counts[selectedWord]);
+		this.topDocuments.forEach(doc => doc.token = doc.counts[selectedWord]);
+	} else {
+		this.documents.forEach(doc => doc.token = doc.words);
+		this.topDocuments.forEach(doc => doc.token = doc.words);
 	}
+  }
 
+  sortRows(ev: any) {
+	const start = ev.newValue === 'asc' ? this.documents.length - 10 : 0;
+	const end = ev.newValue === 'asc' ? this.documents.length : 10;
+	this.topDocuments = this.documents.slice(start, end);
   }
 
   addRelevant() {

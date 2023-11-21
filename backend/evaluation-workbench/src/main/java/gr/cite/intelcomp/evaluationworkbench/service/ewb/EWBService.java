@@ -26,8 +26,6 @@ public class EWBService {
     private final WebClient ewbTMClient;
 
     private final WebClient ewbClassificationClient;
-    //TODO: Remove it when the actual thing is ready
-    private final ConcurrentHashMap<String, List<String>> relevances = new ConcurrentHashMap<>();
 
     @Autowired
     public EWBService(@Qualifier("ewbTMClient") WebClient ewbTMClient, @Qualifier("ewbClassificationClient") WebClient ewbClassificationClient) {
@@ -348,15 +346,16 @@ public class EWBService {
     public List<EWBTopDoc> getTopicTopDocs(TopicTopDocQuery query) {
         List<EWBTopDoc> results = Objects.requireNonNull(ewbTMClient.get().uri("/queries/getTopicTopDocs/", builder -> WebClientUtils.buildParameters(builder, query))
                 .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBTopDocResponse>>() {
-                })).block()).stream().map(doc -> new EWBTopDoc(doc.getId(), doc.getThetas() != null ? doc.getThetas().get(0).getTheta() : 0, doc.getWords())).collect(Collectors.toList());
+                })).block()).stream().map(doc -> new EWBTopDoc(doc.getId(), doc.getThetas() != null ? doc.getThetas().get(0).getTheta() : 0, doc.getWords(), doc.getTopicRelevance(), doc.getCounts())).collect(Collectors.toList());
         CollectionQuery collectionQuery = new CollectionQuery();
         collectionQuery.setCollection(query.getCorpusCollection());
         collectionQuery.setQ("id: (" + results.stream().map(EWBTopDoc::getId).collect(Collectors.joining(" ")) + ")");
         collectionQuery.setQop("OR");
         collectionQuery.setFl("id, title");
+        collectionQuery.setRows(results.size());
         List<Map<String, Object>> collectedData = this.queryCollection(collectionQuery);
         results.forEach(doc -> doc.setTitle(collectedData.stream().filter(cd -> cd.get("id").equals(doc.getId())).map(cd -> cd.get("title").toString()).findFirst().orElse("N/A")));
-        results.sort(Comparator.comparing((EWBTopDoc topDoc) -> topDoc.getTopic() * topDoc.getWords()).reversed());
+        results.sort(Comparator.comparing((EWBTopDoc topDoc) -> topDoc.getTopic() * topDoc.getRelevance()).reversed());
         return results;
     }
 
@@ -377,12 +376,8 @@ public class EWBService {
     }
 
     public List<EWBTopicBeta> getTopicsTopWords(String model, String topicId) {
-        int index = 0;
-        final int maxRows = 100;
         EWBTopicModelInfoQuery query = new EWBTopicModelInfoQuery();
         query.setModelName(model);
-        query.setRows(maxRows);
-        query.setStart(index);
         return this.getTopicMetadataInternal(query).stream().filter(topicMetadata -> topicMetadata.getId().equals(topicId)).map(EWBTopicMetadata::getVocab).flatMap(Collection::stream).sorted(Comparator.comparingInt(EWBTopicBeta::getBeta).reversed()).collect(Collectors.toList());
     }
 
@@ -504,36 +499,44 @@ public class EWBService {
         return ClassificationModel.getResponseModel((LinkedHashMap<String, List<Object>>) response);
     }
 
-    public EWBTopicMetadata addTopic(RelevantTopicModel relevantTopicModel) {
+    public boolean addTopic(RelevantTopicModel relevantTopicModel) {
         Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String key = principal.getClaimAsString("sub") + "-" + relevantTopicModel.getModel();
-        if (!this.relevances.containsKey(key)) {
-            this.relevances.put(key, new ArrayList<>());
-        }
-        this.relevances.get(key).add(relevantTopicModel.getTopicId());
-        return this.getTopicMetadata(relevantTopicModel.getModel(), relevantTopicModel.getTopicId());
+        String key = principal.getClaimAsString("sub");
+        EWBRelevanceTopicModel ewbRelevanceTopicModel = new EWBRelevanceTopicModel(relevantTopicModel.getModel(), key, Integer.parseInt(relevantTopicModel.getTopicId().substring(1)));
+        return Objects.requireNonNull(this.ewbTMClient.post().uri("/models/addRelevantTpcForUser", builder -> WebClientUtils.buildParameters(builder, ewbRelevanceTopicModel))
+                .exchangeToMono(mono -> mono.bodyToMono(String.class)).block()).isEmpty();
     }
 
-    public void removeTopic(RelevantTopicModel relevantTopicModel) {
+    public boolean removeTopic(RelevantTopicModel relevantTopicModel) {
         Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String key = principal.getClaimAsString("sub") + "-" + relevantTopicModel.getModel();
-        if (this.relevances.containsKey(key)) {
-            this.relevances.put(key, this.relevances.get(key).stream().filter(s -> !s.equals(relevantTopicModel.getTopicId())).toList());
-        }
+        String key = principal.getClaimAsString("sub");
+        EWBRelevanceTopicModel ewbRelevanceTopicModel = new EWBRelevanceTopicModel(relevantTopicModel.getModel(), key, Integer.parseInt(relevantTopicModel.getTopicId().substring(1)));
+        return Objects.requireNonNull(this.ewbTMClient.post().uri("/models/removeRelevantTpcForUser", builder -> WebClientUtils.buildParameters(builder, ewbRelevanceTopicModel))
+                .exchangeToMono(mono -> mono.bodyToMono(String.class)).block()).isEmpty();
+    }
+
+    private List<EWBTopicMetadata> getUserTopicsInternal(RelativeTopicQuery relativeTopicQuery) {
+        return this.ewbTMClient.get().uri("/queries/getUserRelevantTopics", builder -> WebClientUtils.buildParameters(builder, relativeTopicQuery))
+                .exchangeToMono(mono -> mono.bodyToMono(new ParameterizedTypeReference<List<EWBTopicMetadata>>() {
+                })).block();
     }
 
     public List<EWBTopicMetadata> getUserTopics(String model) {
         Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String key = principal.getClaimAsString("sub") + "-" + model;
-        if (this.relevances.containsKey(key)) {
-            return this.getAllTopicMetadata(model).stream().filter(ewbTopicMetadata -> this.relevances.get(key).contains(ewbTopicMetadata.getId())).toList();
-        }
-        return Collections.EMPTY_LIST;
+        String key = principal.getClaimAsString("sub");
+        RelativeTopicQuery relativeTopicQuery = new RelativeTopicQuery();
+        relativeTopicQuery.setModel(model);
+        relativeTopicQuery.setUser(key);
+        return this.getUserTopicsInternal(relativeTopicQuery);
     }
 
     public Boolean isTopicRelevant(RelevantTopicModel relevantTopicModel) {
         Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String key = principal.getClaimAsString("sub") + "-" + relevantTopicModel.getModel();
-        return this.relevances.containsKey(key) && this.relevances.get(key).stream().anyMatch(s -> s.equals(relevantTopicModel.getTopicId()));
+        String key = principal.getClaimAsString("sub");
+        RelativeTopicQuery relativeTopicQuery = new RelativeTopicQuery();
+        relativeTopicQuery.setModel(relevantTopicModel.getModel());
+        relativeTopicQuery.setUser(key);
+        List<EWBTopicMetadata> topics = this.getUserTopicsInternal(relativeTopicQuery);
+        return topics.stream().anyMatch(s -> s.getId().equals(relevantTopicModel.getTopicId()));
     }
 }

@@ -15,7 +15,7 @@ public class WebClientUtils {
 
     public static URI buildParameters(UriBuilder builder, Object data) {
         List<Field> fields = List.of(data.getClass().getDeclaredFields());
-        List<Method> getters = Stream.of(data.getClass().getDeclaredMethods()).filter(method -> method.getName().startsWith("get")).collect(Collectors.toList());
+        List<Method> getters = Stream.of(data.getClass().getDeclaredMethods()).filter(method -> method.getName().startsWith("get")).toList();
         fields.forEach(field -> {
             Method getter = getters.stream().filter(method -> method.getName().equals(makeGetterMethodName(field.getName()))).findFirst().orElse(null);
             if (getter != null && getter.canAccess(data)) {

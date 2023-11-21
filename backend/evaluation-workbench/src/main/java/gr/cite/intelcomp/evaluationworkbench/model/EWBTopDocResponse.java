@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gr.cite.intelcomp.evaluationworkbench.model.deserializer.EWBThetaDeserializer;
 
 import java.util.List;
+import java.util.Map;
 
 public class EWBTopDocResponse {
 
@@ -14,6 +15,11 @@ public class EWBTopDocResponse {
 
     @JsonProperty("num_words_per_doc")
     private Integer words;
+
+    @JsonProperty("topic_relevance")
+    private Integer topicRelevance;
+
+    private Map<String, Integer> counts;
 
     public String getId() {
         return id;
@@ -37,5 +43,21 @@ public class EWBTopDocResponse {
 
     public void setWords(Integer words) {
         this.words = words;
+    }
+
+    public Integer getTopicRelevance() {
+        return topicRelevance;
+    }
+
+    public void setTopicRelevance(Integer topicRelevance) {
+        this.topicRelevance = topicRelevance;
+    }
+
+    public Map<String, Integer> getCounts() {
+        return counts;
+    }
+
+    public void setCounts(Map<String, Integer> counts) {
+        this.counts = counts;
     }
 }

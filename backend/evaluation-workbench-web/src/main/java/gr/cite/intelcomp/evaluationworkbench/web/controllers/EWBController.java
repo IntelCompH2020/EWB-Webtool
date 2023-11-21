@@ -157,13 +157,13 @@ public class EWBController {
     }
 
     @PostMapping("topics/addRelative")
-    public EWBTopicMetadata addTopic(@RequestBody RelevantTopicModel model) {
+    public boolean addTopic(@RequestBody RelevantTopicModel model) {
         return this.service.addTopic(model);
     }
 
     @PostMapping("topics/removeRelative")
-    public void removeTopic(@RequestBody RelevantTopicModel model) {
-        this.service.removeTopic(model);
+    public boolean removeTopic(@RequestBody RelevantTopicModel model) {
+        return this.service.removeTopic(model);
     }
 
     @GetMapping("topics/relative")
