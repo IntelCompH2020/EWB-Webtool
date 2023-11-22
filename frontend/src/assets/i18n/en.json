@@ -962,7 +962,8 @@
 						"NUM-ACTIVE-DOCS": "Nr Active Docs",
 						"RELEVANCE": "Topic Relevance",
 						"COHERENCE": "Coherence",
-						"LABEL": "Label"
+						"LABEL": "Label",
+						"WORDS": "Words"
 					}
 				}
 			},

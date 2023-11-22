@@ -36,6 +36,8 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 
 	public selectionType = SelectionType;
 
+	selectedWords: TopicBeta[] = [];
+
   constructor(
 	private dialogRef: MatDialogRef<TopicViewComponent>,
 	private ewbService: EwbService,
@@ -44,7 +46,8 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 		corpus: string,
 		model: string,
 		topicId: string,
-		topicName: string
+		topicName: string,
+		word: string
 	}) {
 		super();
 	 }
@@ -74,6 +77,9 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 		this.maxValue = this.documents.reduce((prev, curr) => (prev.topic > curr.topic)? prev : curr).relevance;
 		this.topDocuments = this.documents.slice(0, 10);
 		this.setupTopDocColumns();
+		if (this.data.word !== null) {
+			this.selectWord([{id: this.data.word}]);
+		}
 	});
 
 	this.ewbService.getTopicTopWords(this.data.model, this.data.topicId)
@@ -82,6 +88,9 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 		this.words = result;
 		this.maxValue = this.words.reduce((prev, curr) => (prev.beta > curr.beta)? prev : curr).beta;
 		this.setupTopWordColumns();
+		if (this.data.word !== null) {
+			this.selectedWords = this.words.filter(topicBeta => topicBeta.id === this.data.word);
+		}
 	});
 
 	this.ewbService.isTopicRelative(this.data.model, this.data.topicId)
@@ -129,7 +138,7 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 			canAutoResize: true,
 			maxWidth: 150,
 			minWidth: 100,
-			languageName: 'Tokens',
+			languageName: 'APP.EWB-COMPONENT.MODEL-OVERVIEW-COMPONENT.TOPIC-VIEWER.LISTING.WORDS',
 			headerClass: 'pretty-header'
 		}
 	]);
@@ -139,6 +148,15 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 	const pipe = new PercentValuePipe();
 	pipe.maxValue = this.maxValue > 100 ? this.maxValue : 100;
 	this.topWordColumns.push(...[
+		{
+			width: 30,
+			sortable: false,
+			canAutoResize: false,
+			draggable: false,
+			resizeable: false,
+			headerCheckboxable: true,
+			checkboxable: true
+		},
 		{
 			prop: nameof<TopicBeta>(x => x.id),
 			name: 'Word',
@@ -190,9 +208,13 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
   selectWord(event: any) {
   	let selectedWord: string = null;
 	if (event.length > 0) {
-		selectedWord = event[0].id;
-		this.documents.forEach(doc => doc.token = doc.counts[selectedWord]);
-		this.topDocuments.forEach(doc => doc.token = doc.counts[selectedWord]);
+		this.documents.forEach(doc => doc.token = 0);
+		this.topDocuments.forEach(doc => doc.token = 0);
+		for (let element of event) {
+			selectedWord = element.id;
+			this.documents.forEach(doc => doc.token = (doc.token + (doc.counts[selectedWord] !== undefined ? doc.counts[selectedWord] : 0)));
+			this.topDocuments.forEach(doc => doc.token = (doc.token + (doc.counts[selectedWord] !== undefined ? doc.counts[selectedWord] : 0)));
+		}
 	} else {
 		this.documents.forEach(doc => doc.token = doc.words);
 		this.topDocuments.forEach(doc => doc.token = doc.words);

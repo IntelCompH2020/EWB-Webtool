@@ -18,7 +18,7 @@ export class ListingComponent extends BaseComponent implements OnInit, OnChanges
 	@ViewChild('functionValueTemplate', { static: true }) functionValueTemplate: TemplateRef<any>;
 
 
-	selected = [];
+	@Input() selected = [];
 
 
 	@Input()

@@ -537,7 +537,8 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 					corpus: this.corpus,
 					model: this.model,
 					topicId: event.data.id,
-					topicName: this.getTopicName(event.data.id)
+					topicName: this.getTopicName(event.data.id),
+					word: (event.data.isWord ? event.data.name : null)
 				}
 			});
 		}
@@ -602,6 +603,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 			value: beta.beta,
 			name: beta.id,
 			id: topicId,
+			isWord: true,
 			path: `${topicName}/${beta.id}`
 		});
 	});
