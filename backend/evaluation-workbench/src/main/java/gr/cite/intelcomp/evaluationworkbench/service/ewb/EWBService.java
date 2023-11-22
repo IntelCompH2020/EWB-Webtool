@@ -171,6 +171,9 @@ public class EWBService {
             doc.remove(simKey);
             String ndocsKey = doc.keySet().stream().filter(key -> key.equals("nwords_per_doc")).findFirst().orElse("");
             doc.remove(ndocsKey);
+            if (!doc.containsKey("id")) {
+                doc.put("id", docId);
+            }
         }).findFirst().orElse(null);
     }
 

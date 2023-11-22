@@ -9,3 +9,9 @@
 	text-align: center;
 	border-radius: 5px;
 }
+
+::ng-deep .mat-tab-label:last-child {
+	color: black !important;
+	margin-left: auto;
+	opacity: 1;
+}
