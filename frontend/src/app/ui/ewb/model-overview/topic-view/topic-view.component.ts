@@ -33,6 +33,8 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 	topWordColumns: ColumnDefinition[] = [];
 	isRelevant: boolean = false;
 	topDocuments: TopDoc[] = [];
+	private start = 0;
+	private end = 10;
 
 	public selectionType = SelectionType;
 
@@ -75,7 +77,7 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 		this.documents = result;
 		this.documents.forEach(doc => doc.token = doc.words);
 		this.maxValue = this.documents.reduce((prev, curr) => (prev.topic > curr.topic)? prev : curr).relevance;
-		this.topDocuments = this.documents.slice(0, 10);
+		this.topDocuments = this.documents.slice(this.start, this.end);
 		this.setupTopDocColumns();
 		if (this.data.word !== null) {
 			this.selectWord([{id: this.data.word}]);
@@ -207,24 +209,25 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 
   selectWord(event: any) {
   	let selectedWord: string = null;
+	this.documents.forEach(doc => doc.token = 0);
+	this.topDocuments = [];
 	if (event.length > 0) {
-		this.documents.forEach(doc => doc.token = 0);
-		this.topDocuments.forEach(doc => doc.token = 0);
+
 		for (let element of event) {
 			selectedWord = element.id;
 			this.documents.forEach(doc => doc.token = (doc.token + (doc.counts[selectedWord] !== undefined ? doc.counts[selectedWord] : 0)));
-			this.topDocuments.forEach(doc => doc.token = (doc.token + (doc.counts[selectedWord] !== undefined ? doc.counts[selectedWord] : 0)));
+			this.topDocuments = this.documents.slice(this.start, this.end);
 		}
 	} else {
 		this.documents.forEach(doc => doc.token = doc.words);
-		this.topDocuments.forEach(doc => doc.token = doc.words);
+		this.topDocuments = this.documents.slice(this.start, this.end);
 	}
   }
 
   sortRows(ev: any) {
-	const start = ev.newValue === 'asc' ? this.documents.length - 10 : 0;
-	const end = ev.newValue === 'asc' ? this.documents.length : 10;
-	this.topDocuments = this.documents.slice(start, end);
+	this.start = ev.newValue === 'asc' ? this.documents.length - 10 : 0;
+	this.end = ev.newValue === 'asc' ? this.documents.length : 10;
+	this.topDocuments = this.documents.slice(this.start, this.end);
   }
 
   addRelevant() {
