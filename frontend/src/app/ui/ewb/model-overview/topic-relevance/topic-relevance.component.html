@@ -2,7 +2,10 @@
 	<div class="col-auto menu" *ngIf="selection === '1'">
 		<button mat-button [matMenuTriggerFor]="topicMenu">{{'APP.EWB-COMPONENT.TOPIC-RELEVANCE.TOPICS' | translate}}</button>
 		<mat-menu #topicMenu="matMenu">
-			<div mat-menu-item *ngFor="let topic of topics" class="menu-item"><span class="item-label">{{topic.tpc_labels}}</span><button mat-button class="delete-button" (click)="removeTopic(topic, $event)"><mat-icon class="delete-icon">clear</mat-icon></button></div>
+			<div mat-menu-item *ngFor="let topic of topics" class="menu-item row">
+				<button mat-button class="delete-button col-auto" (click)="removeTopic(topic, $event)"><mat-icon class="delete-icon">clear</mat-icon></button>
+				<span class="item-label col-auto">{{topic.tpc_labels}}</span>
+			</div>
 		</mat-menu>
 	</div>
 	<mat-radio-group class="col-auto" (change)="selectRadio($event)" value="0">
