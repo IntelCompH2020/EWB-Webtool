@@ -33,8 +33,8 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 	topWordColumns: ColumnDefinition[] = [];
 	isRelevant: boolean = false;
 	topDocuments: TopDoc[] = [];
-	private start = 0;
-	private end = 10;
+	private sortFieldName: string = null;
+	private sortOrder: string = 'desc';
 
 	public selectionType = SelectionType;
 
@@ -77,7 +77,7 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 		this.documents = result;
 		this.documents.forEach(doc => doc.token = doc.words);
 		this.maxValue = this.documents.reduce((prev, curr) => (prev.topic > curr.topic)? prev : curr).relevance;
-		this.topDocuments = this.documents.slice(this.start, this.end);
+		this.topDocuments = this.documents.slice(0, 10);
 		this.setupTopDocColumns();
 		if (this.data.word !== null) {
 			this.selectWord([{id: this.data.word}]);
@@ -210,24 +210,29 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
   selectWord(event: any) {
   	let selectedWord: string = null;
 	this.documents.forEach(doc => doc.token = 0);
-	this.topDocuments = [];
 	if (event.length > 0) {
 
 		for (let element of event) {
 			selectedWord = element.id;
 			this.documents.forEach(doc => doc.token = (doc.token + (doc.counts[selectedWord] !== undefined ? doc.counts[selectedWord] : 0)));
-			this.topDocuments = this.documents.slice(this.start, this.end);
+			this.sortDocuments();
 		}
 	} else {
 		this.documents.forEach(doc => doc.token = doc.words);
-		this.topDocuments = this.documents.slice(this.start, this.end);
+		this.sortDocuments();
 	}
   }
 
   sortRows(ev: any) {
-	this.start = ev.newValue === 'asc' ? this.documents.length - 10 : 0;
-	this.end = ev.newValue === 'asc' ? this.documents.length : 10;
-	this.topDocuments = this.documents.slice(this.start, this.end);
+	this.sortOrder = ev.newValue;
+	this.sortFieldName = ev.sortDescriptors[0].property;
+	this.sortDocuments();
+  }
+
+  sortDocuments() {
+	this.topDocuments = [];
+	this.documents = this.documents.sort((d0, d1) => (this.sortOrder === 'asc')? (d0[this.sortFieldName] - d1[this.sortFieldName]) : -1 * (d0[this.sortFieldName] - d1[this.sortFieldName]));
+	this.topDocuments = this.documents.slice(0, 10);
   }
 
   addRelevant() {
