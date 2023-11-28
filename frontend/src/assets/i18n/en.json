@@ -947,7 +947,7 @@
 				"TOPICS": "Topics"
 			},
 			"MODEL-OVERVIEW-COMPONENT": {
-				"DEFAULT": "Default View",
+				"DEFAULT": "General View",
 				"HIERARCHICAL": "Hierarchical View",
 				"TEMPORAL": "Temporal View",
 				"SCALE": "Scale View",

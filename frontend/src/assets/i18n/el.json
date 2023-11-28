@@ -526,7 +526,7 @@
 			"DOCUMENT-SEARCH": "Αναζήτηση Εγγράφου",
 			"SIMILARITIES": "Ομιότητες",
 			"MODEL-OVERVIEW-COMPONENT": {
-				"DEFAULT": "Προεπιλεγμένη προβολή",
+				"DEFAULT": "Γενική προβολή",
 				"HIERARCHICAL": "Ηεραρχική προβολή",
 				"TEMPORAL": "Χρονική προβολή",
 				"SCALE": "Scale View",
