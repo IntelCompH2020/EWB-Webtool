@@ -42,10 +42,6 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 	private relevantTopics: TopicMetadata[] = [];
 	private topicRelevanceSubscription: any;
 
-	//TODO: delete this section
-	private colorMap = new Map<string, string>();
-	//End Section
-
   constructor(private ewbService: EwbService, private dialog: MatDialog, private topicRelevanceService: TopicRelevanceService) {
 	super();
    }
@@ -82,35 +78,6 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 					.pipe(takeUntil(this._destroyed))
 					.subscribe((result: TopicMetadata[]) => {
 						this.topics = result;
-
-						//TODO: This section will be deleted
-						const colors = [];
-						const colorMax = this.topics.length;
-						const colorIndexes = [];
-						for (let i = 0; i < colorMax; i++) {
-							while(true) {
-								const color = this.generateRandomColor();
-								if (!colors.includes(color)) {
-									colors.push(color);
-									break;
-								}
-							}
-						}
-						this.topics.forEach((topic) => {
-							//TODO: This section will be deleted
-							let index = 0;
-							while(true) {
-								index = Math.round((Math.random() * colorMax));
-								if (!colorIndexes.includes(index)) {
-									colorIndexes.push(index);
-									break;
-								}
-							}
-							this.colorMap.set(topic.id, colors[index]);
-							//End Section
-						});
-						//End Section
-
 						this.setChartOptions();
 					});
   }
@@ -275,7 +242,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 			name: topic.tpc_labels,
 			path: topic.tpc_labels,
 			id: topic.id,
-			color: [this.colorMap.get(topic.id)],
+			//color: [//TODO Set color from Topic],
 			children: this.getTopicChildren(topic.id, topic.tpc_labels)
 		});
 	});
@@ -317,7 +284,6 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 				values.get(value[0]).push(val[1]);
 			});
 		});
-		console.log(JSON.stringify(years));
 		this.chartOptions = {
 			title: {
 				text: ''
@@ -380,7 +346,7 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
 					type: 'line',
 					stack: 'x',
 					areaStyle: {},
-					color: this.colorMap.get(topic.id),
+					//color: //TODO: Set value from Topic,
 					emphasis: {
 						focus: 'series'
 					},
@@ -630,14 +596,6 @@ export class ModelOverviewComponent extends BaseComponent implements OnInit {
   private getTopicRelevance(topicId: string): number {
 	return this.topics.filter((topic: TopicMetadata) => topic.id === topicId)[0].topic_entropy;
   }
-
-  generateColorHex() {
-  		return ((Math.random() * 256) & 0xFF).toString(16);
-  	}
-
-  	generateRandomColor(): string {
-  		return '#' + this.generateColorHex() + '' + this.generateColorHex() + '' + this.generateColorHex();
-  	}
 
   private getTopicChildren(topicId: string, topicName: string): any[] {
 	const children: any[] = [];
