@@ -9,6 +9,8 @@ import { TopicRelation } from '@app/core/model/ewb/topic-relation.model';
 import { Topic } from '@app/core/model/ewb/topic.model';
 import { ClassificationQuery } from '@app/core/query/classification-query.lookup';
 import { DocQuery } from '@app/core/query/docs.lookup';
+import { ExpertSuggestionQuery } from '@app/core/query/expert-suggestion.lookup';
+import { ExpertQuery } from '@app/core/query/experts.lookup';
 import { HighSimDocLookup } from '@app/core/query/high-sim-doc.lookup';
 import { EWBScoreSimilarityQuery } from '@app/core/query/score-similarity.lookup';
 import { SimilatiryPairQuery } from '@app/core/query/similarities-pair-query.lookup';
@@ -180,6 +182,18 @@ export class EwbService {
 
   isTopicRelative(model: string, topicId: string): Observable<boolean> {
 	return this.http.post<boolean>(`${this.apiBase}/topics/isRelevant`, {model: model, topicId: topicId});
+  }
+
+  listAllExpertCollections(): Observable<QueryResult<string>> {
+	return this.http.get<QueryResult<string>>(`${this.apiBase}/listAllExpertCollections`);
+  }
+
+  queryExperts(docsQuery: ExpertQuery): Observable<QueryResult<any>> {
+    return this.http.post<QueryResult<any>>(`${this.apiBase}/queryExperts`, docsQuery);
+  }
+
+  suggestExperts(docsQuery: ExpertSuggestionQuery): Observable<QueryResult<any>> {
+    return this.http.post<QueryResult<any>>(`${this.apiBase}/suggestExperts`, docsQuery);
   }
 
 }

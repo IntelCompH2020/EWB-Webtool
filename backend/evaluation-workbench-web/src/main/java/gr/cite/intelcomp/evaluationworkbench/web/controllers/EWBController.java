@@ -176,4 +176,26 @@ public class EWBController {
         return this.service.isTopicRelevant(model);
     }
 
+    @GetMapping("listAllExpertCollections")
+    public QueryResult<String> listAllExpertCollections() {
+        List<String> collections = service.getAvailableCollections();
+        return new QueryResult<>(collections, collections.size());
+    }
+
+    @PostMapping("queryExperts")
+    public QueryResult<ExpertModel> queryExperts(@RequestBody ExpertQuery query) {
+        if (query.getStart() == null) {
+            query.setStart(0L);
+        }
+        List<ExpertModel> expertModels = service.queryExperts(query);
+        Long expertCount = service.countExperts(query);
+        return new QueryResult<>(expertModels, expertCount);
+    }
+
+    @PostMapping("suggestExperts")
+    public QueryResult<ExpertModel> suggestExperts(@RequestBody ExpertSuggestionQuery query) {
+        List<ExpertModel> expertModels = service.suggestExperts(query);
+        return new QueryResult<>(expertModels, expertModels.size());
+    }
+
 }

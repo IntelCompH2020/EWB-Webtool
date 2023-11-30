@@ -16,6 +16,11 @@ const appRoutes: Routes = [
 		canLoad: [AuthGuard],
 		loadChildren: () => import('@app/ui/ewb/ewb.module').then(m => m.EwbModule)
 	},
+//	{
+//		path: 'expert',
+//		canLoad: [AuthGuard],
+//		loadChildren: () => import('@app/ui/expert/expert.module').then(m => m.ExpertModule)
+//	},
 	{
 		path: 'classify',
 		canLoad: [AuthGuard],

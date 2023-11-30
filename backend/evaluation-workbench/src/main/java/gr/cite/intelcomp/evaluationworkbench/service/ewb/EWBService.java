@@ -27,6 +27,35 @@ public class EWBService {
 
     private final WebClient ewbClassificationClient;
 
+    //TODO: This will be deleted
+    private static final Map<String, List<ExpertModel>> experts = Map.of("test1", List.of(new ExpertModel(
+            "1",
+            "test1",
+            "test1",
+            "test1@test1.test1",
+            "test1",
+            "test1",
+            "test1",
+            "test1",
+            "test1",
+            "test1",
+            "test1",
+            List.of("test1"))),
+            "test2", List.of(new ExpertModel(
+                    "1",
+                    "test2",
+                    "test2",
+                    "test2@test2.test2",
+                    "test2",
+                    "test2",
+                    "test2",
+                    "test2",
+                    "test2",
+                    "test2",
+                    "test2",
+                    List.of("test2")
+            )));
+
     @Autowired
     public EWBService(@Qualifier("ewbTMClient") WebClient ewbTMClient, @Qualifier("ewbClassificationClient") WebClient ewbClassificationClient) {
         this.ewbTMClient = ewbTMClient;
@@ -542,4 +571,28 @@ public class EWBService {
         List<EWBTopicMetadata> topics = this.getUserTopicsInternal(relativeTopicQuery);
         return topics.stream().anyMatch(s -> s.getId().equals(relevantTopicModel.getTopicId()));
     }
+
+    public List<String> getAvailableCollections() {
+        return  experts.keySet().stream().toList();
+    }
+
+    public List<ExpertModel> queryExperts(ExpertQuery query) {
+        return experts.get(query.getExpertCollection()).stream()
+                .filter(expertModel -> expertModel.getFirstName().contains(query.getLike()) || expertModel.getLastName().contains(query.getLike()) || expertModel.getTitle().contains(query.getLike()))
+                .skip(query.getStart()).limit(query.getRows()).toList();
+
+    }
+
+    public Long countExperts(ExpertQuery query) {
+        return experts.get(query.getExpertCollection()).stream()
+                .filter(expertModel -> expertModel.getFirstName().contains(query.getLike()) || expertModel.getLastName().contains(query.getLike()) || expertModel.getTitle().contains(query.getLike()))
+                .count();
+    }
+
+    public List<ExpertModel> suggestExperts(ExpertSuggestionQuery query) {
+        return experts.get(query.getExpertCollection()).stream()
+                .filter(expertModel -> expertModel.getAffiliation().contains(query.getText()) || expertModel.getDepartment().contains(query.getText()) || expertModel.getOrganization().contains(query.getText()) || expertModel.getScientificArea().contains(query.getText()) || expertModel.getScientificField().contains(query.getText()) || expertModel.getSubfield().contains(query.getText()) || expertModel.getKeywords().contains(query.getText()))
+                .toList();
+    }
+
 }
