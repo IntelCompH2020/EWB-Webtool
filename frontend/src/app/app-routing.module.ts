@@ -26,11 +26,11 @@ const appRoutes: Routes = [
 		canLoad: [AuthGuard],
 		loadChildren: () => import('@app/ui/classification/classification.module').then(m => m.ClassificationModule)
 	},
-	{
-		path: 'manual',
-		canLoad: [AuthGuard],
-		loadChildren: () => import('@app/ui/manual/manual.module').then(m => m.ManualModule)
-	},
+	// {
+	// 	path: 'manual',
+	// 	canLoad: [AuthGuard],
+	// 	loadChildren: () => import('@app/ui/manual/manual.module').then(m => m.ManualModule)
+	// },
 	{
 		path: 'faq',
 		canLoad: [AuthGuard],
