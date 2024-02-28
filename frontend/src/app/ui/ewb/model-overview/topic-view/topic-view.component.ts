@@ -75,7 +75,7 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 	.pipe(takeUntil(this._destroyed))
 	.subscribe(result => {
 		this.documents = result;
-		this.documents.forEach(doc => doc.token = doc.words);
+		this.documents.forEach(doc => doc.token = 0/*doc.words*/);
 		this.maxValue = this.documents.reduce((prev, curr) => (prev.topic > curr.topic)? prev : curr).relevance;
 		this.topDocuments = this.documents.slice(0, 10);
 		this.setupTopDocColumns();
@@ -218,7 +218,7 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 			this.sortDocuments();
 		}
 	} else {
-		this.documents.forEach(doc => doc.token = doc.words);
+		this.documents.forEach(doc => doc.token = 0/*doc.words*/);
 		this.sortDocuments();
 	}
   }
