@@ -34,6 +34,7 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 	isRelevant: boolean = false;
 	topDocuments: TopDoc[] = [];
 	private sortFieldName: string = null;
+	private oldSortFieldName: string = null;
 	private sortOrder: string = 'desc';
 
 	public selectionType = SelectionType;
@@ -215,9 +216,12 @@ export class TopicViewComponent extends BaseComponent implements OnInit {
 		for (let element of event) {
 			selectedWord = element.id;
 			this.documents.forEach(doc => doc.token = (doc.token + (doc.counts[selectedWord] !== undefined ? doc.counts[selectedWord] : 0)));
+			this.oldSortFieldName = this.sortFieldName;
+			this.sortFieldName = nameof<TopDoc>(x => x.token);
 			this.sortDocuments();
 		}
 	} else {
+		this.sortFieldName = this.oldSortFieldName;
 		this.documents.forEach(doc => doc.token = 0/*doc.words*/);
 		this.sortDocuments();
 	}
